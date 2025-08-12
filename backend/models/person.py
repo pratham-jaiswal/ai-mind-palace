@@ -9,6 +9,7 @@ class Person(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     name = db.Column(db.String(255), nullable=False)
     notes = db.Column(db.Text, nullable=True)
+    additional_info = db.Column(db.JSON, nullable=True)
     last_mentioned = db.Column(db.DateTime, default=datetime.utcnow)
 
     def to_dict(self):

@@ -10,6 +10,7 @@ class Chunk(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     text = db.Column(db.Text, nullable=False)
     chunk_index = db.Column(db.Integer, nullable=False, default=0)
+    additional_info = db.Column(db.JSON, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def to_dict(self):

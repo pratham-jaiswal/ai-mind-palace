@@ -8,6 +8,7 @@ class Decision(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     decision_text = db.Column(db.Text, nullable=False)
+    additional_info = db.Column(db.JSON, nullable=True)
     date = db.Column(db.DateTime, default=datetime.utcnow)
 
     def to_dict(self):

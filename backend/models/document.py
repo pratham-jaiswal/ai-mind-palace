@@ -10,6 +10,7 @@ class Document(db.Model):
     filename = db.Column(db.String(512), nullable=True)
     source = db.Column(db.String(128), nullable=True)
     text = db.Column(db.Text, nullable=True)
+    additional_info = db.Column(db.JSON, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     chunks = db.relationship('Chunk', backref='document', lazy=True)
