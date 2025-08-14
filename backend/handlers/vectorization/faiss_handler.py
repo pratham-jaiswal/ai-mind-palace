@@ -1,5 +1,5 @@
 from langchain_community.vectorstores import FAISS
-from openai_embeddings import embedder
+from .openai_embeddings import embedder
 from utils.env_vars import FAISS_INDEX_DIR
 
 class FaissHandler:

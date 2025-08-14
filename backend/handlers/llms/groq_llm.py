@@ -1,5 +1,5 @@
 from langchain_groq import ChatGroq
-from llm_models import groq_models
+from .llm_models import groq_models
 
 def get_llm(model: str = "openai/gpt-oss-20b", temperature: float = 0.3) -> ChatGroq:
     """
