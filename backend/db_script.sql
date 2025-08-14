@@ -60,6 +60,7 @@ CREATE TABLE lifelog.people (
 CREATE TABLE lifelog.decisions (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES lifelog.users(id) ON DELETE CASCADE,
+    decision_name VARCHAR(255) NOT NULL,
     decision_text TEXT NOT NULL,
     additional_info JSON,
     date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
