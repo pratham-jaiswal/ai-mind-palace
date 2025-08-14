@@ -15,6 +15,9 @@ def get_response():
 
     if not user_query:
         return jsonify_error("User query is required", 400)
+    
+    if isinstance(temperature, float) and (temperature < 0 or temperature > 1):
+        return jsonify_error("Temperature must be between 0 and 1", 400)
 
     response = get_response_service(
         user_query=user_query,
