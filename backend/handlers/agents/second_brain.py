@@ -2,12 +2,12 @@ from handlers.tools.db_memory import DbPersonMemory, DbProjectMemory, DbDecision
 from handlers.tools.vector_memory import VectorMemoryTools
 from handlers.tools.generic_tools import GenericTools
 from .react_agent import get_agent, invoke_agent, get_system_prompt
+from .conversation_handler import ConversationHandler
 import inspect
 
 class SecondBrainAgent:
     def __init__(self, user_id: str):
         self.user_id = user_id
-
 
     def collect_instance_methods_with_user_id(self, user_id, *classes):
         tools = []
@@ -27,9 +27,9 @@ class SecondBrainAgent:
                     tools.append(method)
         return tools
 
-    def use_second_brain(self, user_query: str, timezone: str, provider: str = "openai", 
-                        model: str = "gpt-4.1-nano", temperature: float = 0.3, 
-                        debug: bool = False) -> str:
+    def use_second_brain(self, user_query: str, timezone: str, thread_id: str, 
+                         provider: str = "openai", model: str = "gpt-4.1-nano", 
+                         temperature: float = 0.3, debug: bool = False) -> str:
         user_id = "example_user_id"
         tools = self.collect_instance_methods_with_user_id(
             user_id,
@@ -38,9 +38,21 @@ class SecondBrainAgent:
             DbDecisionMemory,
             VectorMemoryTools
         ) + self.collect_generic_tools(
-            user_id,
+            timezone,
             GenericTools
         )
+
+        if not thread_id.startswith(f"user-{self.user_id}--"):
+            thread_id = f"user-{self.user_id}--{thread_id}"
+
+        conversations = ConversationHandler(self.user_id).get_conversations_by_thread_id(thread_id)
+
+        state = {
+            "messages": []
+        }
+        for conversation in conversations:
+            state["messages"].append({"role": conversation.sender, "content": conversation.message})
+        state["messages"].append({"role": "user", "content": user_query})
         
         agent = get_agent(
             provider=provider,
@@ -52,7 +64,7 @@ class SecondBrainAgent:
 
         response = invoke_agent(
             agent=agent,
-            state={"messages": [{"role": "user", "content": user_query}]},
+            state=state,
             debug=debug
         )
         

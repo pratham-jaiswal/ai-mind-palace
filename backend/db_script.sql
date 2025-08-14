@@ -76,3 +76,21 @@ CREATE TABLE lifelog.chunks (
     additional_info JSON,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Create the enum type for sender
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'sender_type') THEN
+        CREATE TYPE sender_type AS ENUM ('user', 'ai');
+    END IF;
+END$$;
+
+-- Create the table
+CREATE TABLE IF NOT EXISTS lifelog.conversations (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    thread_id TEXT NOT NULL,
+    message TEXT NOT NULL,
+    sender sender_type NOT NULL,
+    date TIMESTAMP WITHOUT TIME ZONE DEFAULT (NOW() AT TIME ZONE 'UTC') NOT NULL
+);

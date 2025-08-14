@@ -2,9 +2,9 @@ from handlers.agents.second_brain import SecondBrainAgent
 from controllers.utils import jsonify_error, jsonify_ok
 import traceback
 
-def get_response(user_query: str, timezone: str, provider: str = "openai",
-                 model: str = "gpt-4.1-nano", temperature: float = 0.3, 
-                 debug: bool = False) -> str:
+def get_response(user_query: str, timezone: str, thread_id: str, 
+                 provider: str = "openai", model: str = "gpt-4.1-nano", 
+                 temperature: float = 0.3, debug: bool = False) -> str:
     """
     Get a response from the second brain agent based on the user's query.
     
@@ -24,6 +24,7 @@ def get_response(user_query: str, timezone: str, provider: str = "openai",
             provider=provider, 
             model=model, 
             temperature=temperature, 
+            thread_id=thread_id,
             timezone=timezone,
             debug=debug
         )
