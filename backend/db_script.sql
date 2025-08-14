@@ -51,7 +51,7 @@ CREATE TABLE lifelog.people (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES lifelog.users(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
-    notes TEXT,
+    notes TEXT[] DEFAULT '{}',
     additional_info JSON,
     last_mentioned TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
