@@ -3,6 +3,7 @@
 - [x] Vectorization of plain text data - only when relevant
 - [x] Getting structured data from plain text and storing it in the database
 - [x] Add react agent.
+- [ ] Add conversation memory - multiple.
 - [ ] Testing Stage 1: Thoroughly test the current functionality
   - [ ] Vector Memory
   - [ ] Db Memory
