@@ -167,6 +167,19 @@ class DbDecisionMemory:
         db.session.commit()
         return new_decision
 
+    def get_decision_by_id(self, decision_id: int) -> Optional[Decision]:
+        """
+        Retrieve a decision by its ID.
+
+        Args:
+            decision_id (int): The ID of the decision to retrieve.
+        
+        Returns:
+            Optional[Decision]: The decision object if found, or None if not found.
+        """
+        decision = db.session.query(Decision).filter_by(id=decision_id, user_id=self.user_id).first()
+        return decision if decision else None
+
 class DbPersonMemory:
     def __init__(self, user_id):
         self.user_id = user_id
@@ -325,7 +338,7 @@ class DbPersonMemory:
         Create a new person for the user.
 
         Args:
-            name (str): The name of the person.
+            name (str): The name of the person. Use "Self" for the user themselves.
             notes (Optional[List[str]]): Notes about the person.
             additional_info (Optional[dict]): Additional information about the person.
             last_mentioned_str (Optional[str]): The date when the person was last mentioned in "YYYY-MM-DD" format. Defaults to the current date if not provided.
@@ -350,34 +363,62 @@ class DbPersonMemory:
     
     def update_person(self, person_id: int,
                       name: Optional[str] = None,
-                      notes: Optional[List[str]] = None,
-                      additional_info: Optional[dict] = None) -> Person:
+                      notes_update: Optional[dict] = None,
+                      additional_info: Optional[dict] = None) -> dict:
         """
         Update an existing person for the user.
         Args:
             person_id (int): The ID of the person to update.
-            name (Optional[str]): The new name of the person.
-            notes (Optional[List[str]]): The new notes about the person.
-            additional_info (Optional[dict]): Additional information about the person.
+            name (Optional[str]): The new name of the person. Use "Self" for the user themselves.
+            notes_update (Optional[dict]): A dictionary specifying the action and data for notes. 
+                                           Example: {"action": "add", "data": ["note1", "note2"]} 
+                                           Example: {"action": "replace", "data": ["new note1", "new note2"]}
+                                           Example: {"action": "delete", "data": [0, 2]}
+                                           Supported actions: "add", "replace", "delete".
+                                           For "delete", "data" should be a list of indexes to remove.
+                                           For "add" and "replace", "data" should be a list of notes.
+                                           "replace" will replace all existing notes with the new ones.
+            additional_info (Optional[dict]): Additional information about the person. This contains 
+                                              information like relationship, etc. The key "relationship" 
+                                              should be used to store the relationship of the person to 
+                                              the user, e.g. "friend", "colleague", etc.
 
         Returns:
-            Person: The updated person object.
+            dict: A dictionary representation of the updated person object.
         """
 
         person = db.session.query(Person).filter_by(id=person_id, user_id=self.user_id).first()
         if not person:
             raise ValueError("Person not found or does not belong to the user.")
+        
         if name:
             person.name = name
-        if notes is not None:
-            person.notes = notes
+        
+        if notes_update:
+            action = notes_update.get("action")
+            data = notes_update.get("data")
+            if action == "add" and data:
+                person.notes.extend(data)
+            elif action == "replace" and data:
+                person.notes = data
+            elif action == "delete" and data:
+                for index in sorted(data, reverse=True):
+                    if 0 <= index < len(person.notes):
+                        del person.notes[index]
+        
         if additional_info is not None:
             person.additional_info = additional_info
+        
         person.last_mentioned = datetime.utcnow()
         db.session.commit()
 
-    
-        return person
+        return {
+            "id": person.id,
+            "name": person.name,
+            "notes": person.notes,
+            "additional_info": person.additional_info,
+            "last_mentioned": person.last_mentioned.isoformat()
+        }
     
     def delete_person(self, person_id: int) -> bool:
         """
@@ -393,9 +434,35 @@ class DbPersonMemory:
         if not person:
             return False
         
+        if person.name.lower() == "self":
+            raise ValueError("Cannot delete the 'Self' entry.")
+        
         db.session.delete(person)
         db.session.commit()
         return True
+
+    def get_person_by_id(self, person_id: int) -> Optional[Person]:
+        """
+        Retrieve a person by their ID.
+
+        Args:
+            person_id (int): The ID of the person to retrieve.
+        
+        Returns:
+            Optional[Person]: The person object if found, or None if not found.
+        """
+        person = db.session.query(Person).filter_by(id=person_id, user_id=self.user_id).first()
+        return person if person else None
+
+    def get_user_details(self) -> Optional[dict]:
+        """
+        Retrieve the user's details, including their name and any additional information.
+
+        Returns:
+            Optional[dict]: A dictionary containing the user's name and additional information, or None if no user exists.
+        """
+        person = db.session.query(Person).filter_by(user_id=self.user_id).filter(func.lower(Person.name) == "self").first()
+        return person if person else None
 
 class DbProjectMemory:
     def __init__(self, user_id):
@@ -634,3 +701,16 @@ class DbProjectMemory:
         db.session.delete(project)
         db.session.commit()
         return True
+
+    def get_project_by_id(self, project_id: int) -> Optional[Project]:
+        """
+        Retrieve a project by its ID.
+
+        Args:
+            project_id (int): The ID of the project to retrieve.
+        
+        Returns:
+            Optional[Project]: The project object if found, or None if not found.
+        """
+        project = db.session.query(Project).filter_by(id=project_id, user_id=self.user_id).first()
+        return project if project else None

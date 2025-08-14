@@ -35,6 +35,9 @@ class VectorMemoryTools:
             list: A list of the top k documents matching the query.
         """
 
+        if k > 15:
+            k = 15
+
         results = FaissHandler(self.user_id).search_faiss_index(query, source, k)
         return results
     
