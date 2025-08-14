@@ -11,6 +11,7 @@ def get_response():
     provider = data.get('provider', 'openai').lower()
     model = data.get('model', 'gpt-4.1-nano').lower()
     temperature = data.get('temperature', 0.3)
+    timezone = data.get('timezone') # For example, 'Asia/Kolkata'
     debug = data.get('debug', False)
 
     if not user_query:
@@ -24,6 +25,7 @@ def get_response():
         provider=provider,
         model=model,
         temperature=temperature,
+        timezone=timezone,
         debug=debug
     )
     

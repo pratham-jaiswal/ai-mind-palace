@@ -2,7 +2,7 @@ from handlers.agents.second_brain import SecondBrainAgent
 from controllers.utils import jsonify_error, jsonify_ok
 import traceback
 
-def get_response(user_query: str, provider: str = "openai", 
+def get_response(user_query: str, timezone: str, provider: str = "openai",
                  model: str = "gpt-4.1-nano", temperature: float = 0.3, 
                  debug: bool = False) -> str:
     """
@@ -24,6 +24,7 @@ def get_response(user_query: str, provider: str = "openai",
             provider=provider, 
             model=model, 
             temperature=temperature, 
+            timezone=timezone,
             debug=debug
         )
         return jsonify_ok(result)

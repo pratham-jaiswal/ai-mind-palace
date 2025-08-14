@@ -1,6 +1,7 @@
 from handlers.tools.db_memory import DbPersonMemory, DbProjectMemory, DbDecisionMemory
 from handlers.tools.vector_memory import VectorMemoryTools
-from .react_agent import get_agent, invoke_agent
+from handlers.tools.generic_tools import GenericTools
+from .react_agent import get_agent, invoke_agent, get_system_prompt
 import inspect
 
 class SecondBrainAgent:
@@ -16,8 +17,17 @@ class SecondBrainAgent:
                 if not name.startswith("_"):
                     tools.append(method)
         return tools
+    
+    def collect_generic_tools(self, timezone, *classes):
+        tools = []
+        for cls in classes:
+            instance = cls(timezone)
+            for name, method in inspect.getmembers(instance, predicate=inspect.ismethod):
+                if not name.startswith("_"):
+                    tools.append(method)
+        return tools
 
-    def use_second_brain(self, user_query: str, provider: str = "openai", 
+    def use_second_brain(self, user_query: str, timezone: str, provider: str = "openai", 
                         model: str = "gpt-4.1-nano", temperature: float = 0.3, 
                         debug: bool = False) -> str:
         user_id = "example_user_id"
@@ -27,13 +37,16 @@ class SecondBrainAgent:
             DbProjectMemory,
             DbDecisionMemory,
             VectorMemoryTools
+        ) + self.collect_generic_tools(
+            user_id,
+            GenericTools
         )
         
         agent = get_agent(
             provider=provider,
             model=model,
             temperature=temperature,
-            system_prompt="You are a helpful assistant",
+            system_prompt=get_system_prompt(),
             tools=tools
         )
 
