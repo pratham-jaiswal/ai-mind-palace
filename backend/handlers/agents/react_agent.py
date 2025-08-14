@@ -24,14 +24,14 @@ def get_agent(provider: str = "openai",
         ValueError: If the specified provider is not supported.
     """
     llms = {
-        "openai": openai_llm.get_llm(model=model, temperature=temperature),
-        "gemini": gemini_llm.get_llm(model=model, temperature=temperature),
-        "groq": groq_llm.get_llm(model=model, temperature=temperature),
+        "openai": openai_llm,
+        "gemini": gemini_llm,
+        "groq": groq_llm,
     }
     if provider not in llms:
         raise ValueError(f"Provider {provider} is not supported. Supported providers are: {', '.join(llms.keys())}.")
     return create_react_agent(
-        model=llms[provider],
+        model=llms[provider].get_llm(model=model, temperature=temperature),
         tools=tools,
         prompt=system_prompt
     )
@@ -49,7 +49,7 @@ def invoke_agent(agent: create_react_agent, state: dict = { "messages": [] }, de
         The content of the agent's final response message, or a fallback message if no response is available.
     """
     response = {
-        "message": []
+        "messages": []
     }
     if debug:
         for chunk in agent.stream(state, stream_mode="updates"):

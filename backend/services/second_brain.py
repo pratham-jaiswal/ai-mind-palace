@@ -1,8 +1,10 @@
 from handlers.agents.second_brain import SecondBrainAgent
+from controllers.utils import jsonify_error, jsonify_ok
+import traceback
 
-def get_response(self, user_query: str, provider: str = "openai", 
-                    model: str = "gpt-4.1-nano", temperature: float = 0.3, 
-                    debug: bool = False) -> str:
+def get_response(user_query: str, provider: str = "openai", 
+                 model: str = "gpt-4.1-nano", temperature: float = 0.3, 
+                 debug: bool = False) -> str:
     """
     Get a response from the second brain agent based on the user's query.
     
@@ -16,4 +18,15 @@ def get_response(self, user_query: str, provider: str = "openai",
     Returns:
         The response from the second brain agent.
     """
-    return SecondBrainAgent(user_id="abc123").use_second_brain(user_query, provider, model, temperature, debug)
+    try:
+        result = SecondBrainAgent(user_id="abc123").use_second_brain(
+            user_query=user_query, 
+            provider=provider, 
+            model=model, 
+            temperature=temperature, 
+            debug=debug
+        )
+        return jsonify_ok(result)
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify_error("An error occurred while processing your request", 500)
