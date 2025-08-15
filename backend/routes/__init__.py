@@ -4,7 +4,7 @@ from controllers.document_controller import bp as documents_bp
 from controllers.person_controller import bp as people_bp
 from controllers.decision_controller import bp as decisions_bp
 from controllers.chunk_controller import bp as chunks_bp
-from controllers.second_brain import bp as second_brain_bp
+from controllers.mind_palace_controller import bp as mind_palace_bp
 
 def register_routes(app):
     app.register_blueprint(users_bp)
@@ -13,4 +13,4 @@ def register_routes(app):
     app.register_blueprint(people_bp)
     app.register_blueprint(decisions_bp)
     app.register_blueprint(chunks_bp)
-    app.register_blueprint(second_brain_bp)
+    app.register_blueprint(mind_palace_bp)

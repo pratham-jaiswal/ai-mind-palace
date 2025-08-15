@@ -1,9 +1,9 @@
-from services.second_brain import get_response as get_response_service
+from services.mind_palace_service import get_response as get_response_service
 from flask import Blueprint, request
 from controllers.utils import jsonify_error
 import uuid
 
-bp = Blueprint('second_brain', __name__, url_prefix='/invoke')
+bp = Blueprint('mind_palace', __name__, url_prefix='/invoke')
 
 @bp.route('/', methods=['POST'])
 def get_response():

@@ -1,4 +1,4 @@
-from handlers.agents.second_brain import SecondBrainAgent
+from handlers.agents.mind_palace_handler import SecondBrainAgent
 from controllers.utils import jsonify_error, jsonify_ok
 import traceback
 
@@ -19,7 +19,7 @@ def get_response(user_query: str, timezone: str, thread_id: str,
         The response from the second brain agent.
     """
     try:
-        result = SecondBrainAgent(user_id="abc123").use_second_brain(
+        result = SecondBrainAgent(user_id=1).use_second_brain(
             user_query=user_query, 
             provider=provider, 
             model=model, 
