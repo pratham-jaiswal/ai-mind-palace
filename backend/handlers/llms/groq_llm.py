@@ -18,7 +18,6 @@ def get_llm(model: str = "openai/gpt-oss-20b", temperature: float = 0.3) -> Chat
         model=model,
         temperature=temperature,
         max_tokens=None,
-        reasoning_format="parsed",
         timeout=None,
         max_retries=2,
     )
