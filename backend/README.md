@@ -4,11 +4,11 @@
 - [x] Getting structured data from plain text and storing it in the database
 - [x] Add react agent.
 - [x] Add conversation memory - multiple.
-- [ ] Testing Stage 1: Thoroughly test the current functionality
-  - [ ] Conversation Memory
-  - [ ] Vector Memory
-  - [ ] Db Memory
-  - [ ] Data about user themselves are being stored in the database
+- [x] Testing Stage 1: Thoroughly test the current functionality
+  - [x] Conversation Memory
+  - [x] Vector Memory
+  - [x] Db Memory
+  - [x] Data about user themselves are being stored in the database
 - [ ] Conversation CRUD
 - [ ] Add user authentication.
 - [ ] Store user data in the database
