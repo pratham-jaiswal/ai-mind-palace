@@ -81,4 +81,7 @@ class SecondBrainAgent:
             sender="ai"
         )
         
-        return response
+        return {
+            "response": response,
+            "thread_id": thread_id
+        }

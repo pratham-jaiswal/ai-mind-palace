@@ -1,11 +1,13 @@
 from services.mind_palace_service import get_response as get_response_service
 from flask import Blueprint, request
 from controllers.utils import jsonify_error
+from utils.auth_middleware import require_signed_in
 import uuid
 
 bp = Blueprint('mind_palace', __name__, url_prefix='/invoke')
 
 @bp.route('/', methods=['POST'])
+@require_signed_in
 def get_response():
     data = request.get_json() or {}
     user_query = data.get('user_query', '')
@@ -15,6 +17,12 @@ def get_response():
     thread_id = data.get('thread_id', str(uuid.uuid4()))
     timezone = data.get('timezone') # For example, 'Asia/Kolkata'
     debug = data.get('debug', False)
+
+    headers = request.headers
+    jwt_bearer = headers.get('Authorization', '').split(' ')[1]
+
+    if not thread_id:
+        thread_id = str(uuid.uuid4())
 
     if not user_query:
         return jsonify_error("User query is required", 400)
@@ -29,7 +37,8 @@ def get_response():
         temperature=temperature,
         thread_id=thread_id,
         timezone=timezone,
-        debug=debug
+        debug=debug,
+        jwt_bearer=jwt_bearer
     )
     
     return response
