@@ -8,7 +8,7 @@ class Conversation(db.Model):
     __table_args__ = {'schema': 'lifelog'}
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('lifelog.users.id'), nullable=False)
     thread_id = db.Column(db.String, nullable=False)
     message = db.Column(db.Text, nullable=False)
     sender = db.Column(SenderType, nullable=False)

@@ -6,7 +6,7 @@ class Decision(db.Model):
     __table_args__ = {'schema': 'lifelog'}
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('lifelog.users.id'), nullable=False)
     decision_name = db.Column(db.String, nullable=False)
     decision_text = db.Column(db.Text, nullable=False)
     additional_info = db.Column(db.JSON, nullable=True)

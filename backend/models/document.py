@@ -6,7 +6,7 @@ class Document(db.Model):
     __table_args__ = {'schema': 'lifelog'}  
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('lifelog.users.id'), nullable=False)
     filename = db.Column(db.String(512), nullable=True)
     source = db.Column(db.String(128), nullable=True)
     text = db.Column(db.Text, nullable=True)

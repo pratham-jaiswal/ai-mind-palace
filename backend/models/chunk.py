@@ -6,8 +6,8 @@ class Chunk(db.Model):
     __table_args__ = {'schema': 'lifelog'}
 
     id = db.Column(db.Integer, primary_key=True)
-    document_id = db.Column(db.Integer, db.ForeignKey('documents.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    document_id = db.Column(db.Integer, db.ForeignKey('lifelog.documents.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('lifelog.users.id'), nullable=False)
     text = db.Column(db.Text, nullable=False)
     chunk_index = db.Column(db.Integer, nullable=False, default=0)
     additional_info = db.Column(db.JSON, nullable=True)
