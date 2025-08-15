@@ -20,6 +20,6 @@ def get_llm(model: str = "gemini-2.0-flash-lite", temperature: float = 0.3) -> C
         temperature=temperature,
         max_tokens=None,
         timeout=None,
-        max_retries=2,
+        max_retries=25,
     )
     return llm

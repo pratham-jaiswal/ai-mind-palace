@@ -19,6 +19,6 @@ def get_llm(model: str = "openai/gpt-oss-20b", temperature: float = 0.3) -> Chat
         temperature=temperature,
         max_tokens=None,
         timeout=None,
-        max_retries=2,
+        max_retries=25,
     )
     return llm

@@ -19,6 +19,6 @@ def get_llm(model: str = "gpt-4.1-nano", temperature: float = 0.3) -> ChatOpenAI
         temperature=temperature,
         max_tokens=None,
         timeout=None,
-        max_retries=2,
+        max_retries=25,
     )
     return llm
