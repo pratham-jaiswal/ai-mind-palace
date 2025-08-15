@@ -2,7 +2,7 @@ from models import db, Decision, Person, Project
 from schemas import DecisionSchema, PersonSchema, ProjectSchema
 from typing import List, Optional
 from datetime import datetime
-from sqlalchemy.sql import func
+from sqlalchemy import func, String
 
 
 class DbDecisionMemory:
@@ -233,7 +233,7 @@ class DbPersonMemory:
         people = db.session.query(
             Person
         ).filter_by(user_id=self.user_id).filter(
-            func.coalesce(Person.additional_info["relationship"].astext, "stranger") == relationship
+            func.coalesce(Person.additional_info.op("->>")("relationship"), "stranger") == relationship
         ).all()
         return PersonSchema(many=True).dump(people) if people else None
     
