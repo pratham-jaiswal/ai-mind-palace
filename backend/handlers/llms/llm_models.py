@@ -4,7 +4,6 @@ def openai_models():
     return [
         "gpt-4.1",
         "gpt-4.1-mini",
-        "gpt-4.1-nano",
         "gpt-4o",
         "gpt-4o-mini",
         "gpt-5-nano",
@@ -25,8 +24,6 @@ def groq_models():
     if DEV_ENV: # Preview models for development. Read: https://console.groq.com/docs/models#preview-models
         return [
             "deepseek-r1-distill-llama-70b",
-            "meta-llama/llama-4-maverick-17b-128e-instruct",
-            "meta-llama/llama-4-scout-17b-16e-instruct",
             "moonshotai/kimi-k2-instruct",
             "openai/gpt-oss-120b",
             "openai/gpt-oss-20b",
