@@ -86,11 +86,11 @@ BEGIN
 END$$;
 
 -- Create the table
-CREATE TABLE IF NOT EXISTS lifelog.conversations (
+CREATE TABLE lifelog.conversations (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES lifelog.users(id) ON DELETE CASCADE,
     thread_id TEXT NOT NULL,
     message TEXT NOT NULL,
     sender sender_type NOT NULL,
-    date TIMESTAMP WITHOUT TIME ZONE DEFAULT (NOW() AT TIME ZONE 'UTC') NOT NULL
+    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
