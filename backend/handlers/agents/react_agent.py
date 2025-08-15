@@ -100,7 +100,7 @@ def get_system_prompt() -> str:
             >   - User goals, tasks in progress, and deadlines.
         - **search_memory** – Retrieve relevant information from long-term memory.
         > Always try multiple search queries for best coverage. Limit results per query to 15.
-        > If you save or retrieve data in the normal database, also update long-term memory when applicable.
+        > If you save data in the normal database, also update long-term memory when applicable.
 
         ### Decision Management
         - **get_last_n_decisions**
