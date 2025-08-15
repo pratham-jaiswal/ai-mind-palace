@@ -30,9 +30,8 @@ class SecondBrainAgent:
     def use_second_brain(self, user_query: str, timezone: str, thread_id: str, 
                          provider: str = "openai", model: str = "gpt-4.1-nano", 
                          temperature: float = 0.3, debug: bool = False) -> str:
-        user_id = "example_user_id"
         tools = self.collect_instance_methods_with_user_id(
-            user_id,
+            self.user_id,
             DbPersonMemory,
             DbProjectMemory,
             DbDecisionMemory,
@@ -42,10 +41,18 @@ class SecondBrainAgent:
             GenericTools
         )
 
+        conversation_cls = ConversationHandler(self.user_id)
+        
         if not thread_id.startswith(f"user-{self.user_id}--"):
             thread_id = f"user-{self.user_id}--{thread_id}"
 
-        conversations = ConversationHandler(self.user_id).get_conversations_by_thread_id(thread_id)
+        conversation_cls.create_conversation(
+            thread_id=thread_id,
+            message=user_query,
+            sender="user"
+        )
+
+        conversations = conversation_cls.get_conversations_by_thread_id(thread_id)
 
         state = {
             "messages": []
@@ -66,6 +73,12 @@ class SecondBrainAgent:
             agent=agent,
             state=state,
             debug=debug
+        )
+
+        conversation_cls.create_conversation(
+            thread_id=thread_id,
+            message=response,
+            sender="ai"
         )
         
         return response
