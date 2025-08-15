@@ -1,4 +1,4 @@
-from handlers.agents.mind_palace_handler import SecondBrainAgent
+from handlers.agents.mind_palace_handler import MindPalaceHandler
 from controllers.utils import jsonify_error, jsonify_ok
 import traceback
 import os
@@ -10,7 +10,7 @@ def get_response(user_query: str, timezone: str, thread_id: str,
                  temperature: float = 0.3, debug: bool = False,
                  jwt_bearer: str = None) -> str:
     """
-    Get a response from the second brain agent based on the user's query.
+    Get a response from the mind palace agent based on the user's query.
     
     Args:
         user_query: The query from the user.
@@ -20,7 +20,7 @@ def get_response(user_query: str, timezone: str, thread_id: str,
         debug: If True, enables debug mode.
     
     Returns:
-        The response from the second brain agent.
+        The response from the mind palace agent.
     """
     try:
         from clerk_backend_api import Clerk
@@ -49,7 +49,7 @@ def get_response(user_query: str, timezone: str, thread_id: str,
         if not user_id:
             return jsonify_error("Forbidden", 403)
         
-        result = SecondBrainAgent(user_id=user_id).use_second_brain(
+        result = MindPalaceHandler(user_id=user_id).use_mind_palace(
             user_query=user_query, 
             provider=provider, 
             model=model, 

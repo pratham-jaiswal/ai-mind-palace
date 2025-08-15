@@ -5,7 +5,7 @@ from .react_agent import get_agent, invoke_agent, get_system_prompt
 from .conversation_handler import ConversationHandler
 import inspect
 
-class SecondBrainAgent:
+class MindPalaceHandler:
     def __init__(self, user_id: str):
         self.user_id = user_id
 
@@ -27,7 +27,7 @@ class SecondBrainAgent:
                     tools.append(method)
         return tools
 
-    def use_second_brain(self, user_query: str, timezone: str, thread_id: str, 
+    def use_mind_palace(self, user_query: str, timezone: str, thread_id: str, 
                          provider: str = "openai", model: str = "gpt-4.1-nano", 
                          temperature: float = 0.3, debug: bool = False) -> str:
         tools = self.collect_instance_methods_with_user_id(
