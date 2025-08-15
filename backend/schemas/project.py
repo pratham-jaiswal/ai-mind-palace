@@ -1,6 +1,7 @@
-from models import ma, Project
+from models import Project
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
-class ProjectSchema(ma.SQLAlchemyAutoSchema):
+class ProjectSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Project
         load_instance = True
