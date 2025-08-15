@@ -1,42 +1,57 @@
 from flask import Blueprint, request
 from services.user_service import UserService
 from controllers.utils import jsonify_ok, jsonify_error
+from utils.auth_middleware import clerk_webhook_required
 
 bp = Blueprint('users', __name__, url_prefix='/users')
 
 @bp.route('/', methods=['POST'])
-def create_user():
-    data = request.get_json() or {}
-    email = data.get('email')
-    name = data.get('name')
-    if not email:
-        return jsonify_error('email is required')
-    user = UserService.create(email=email, name=name)
-    return jsonify_ok(user.to_dict())
+@clerk_webhook_required
+def manage_user():
+    res = request.get_json() or {}
+    data = res.get('data', {})
+    clerk_id = data.get('id')
+    first_name = data.get('first_name', '')
+    last_name = data.get('last_name', '')
+    name = f'{first_name} {last_name}'
+        
+    webhook_type = res.get('type')
+    primary_email_address_id = data.get('primary_email_address_id')
+    email_addresses = data.get('email_addresses', [])
 
-@bp.route('/<int:user_id>', methods=['GET'])
-def get_user(user_id):
-    user = UserService.get(user_id)
-    if not user:
-        return jsonify_error('not found', 404)
-    return jsonify_ok(user.to_dict())
+    email = ''
+    for email_data in email_addresses:
+        if email_data.get('id', '') == primary_email_address_id:
+            email = email_data.get('email_address', '')
+            break
 
-@bp.route('/', methods=['GET'])
-def list_users():
-    users = UserService.list()
-    return jsonify_ok([u.to_dict() for u in users])
-
-@bp.route('/<int:user_id>', methods=['PUT'])
-def update_user(user_id):
-    data = request.get_json() or {}
-    user = UserService.update(user_id, **data)
-    if not user:
-        return jsonify_error('not found', 404)
-    return jsonify_ok(user.to_dict())
-
-@bp.route('/<int:user_id>', methods=['DELETE'])
-def delete_user(user_id):
-    ok = UserService.delete(user_id)
-    if not ok:
-        return jsonify_error('not found', 404)
-    return jsonify_ok()
+    if webhook_type == 'user.created':
+        if not name:
+            return jsonify_error('No "name" associated with your account.')
+        if not email:
+            return jsonify_error('email is required')
+        user = UserService.create(
+            email=email, 
+            name=name, 
+            additional_info={
+                'clerk_id': clerk_id
+            }
+        )
+        return jsonify_ok(user.to_dict())
+    elif webhook_type == 'user.updated':
+        if not name:
+            return jsonify_error('No "name" associated with your account.')
+        if not email:
+            return jsonify_error('email is required')
+        user = UserService.update(
+            email=email, 
+            name=name, 
+            clerk_id=clerk_id
+        )
+        return jsonify_ok(user.to_dict())
+    elif webhook_type == 'user.deleted':
+        ok = UserService.delete(clerk_id)
+        return jsonify_ok({
+            "deleted": ok
+        })
+    return jsonify_error('Invalid webhook type')
