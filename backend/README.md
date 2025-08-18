@@ -9,9 +9,9 @@
   - [x] Vector Memory
   - [x] Db Memory
   - [x] Data about user themselves are being stored in the database
-- [ ] Conversation CRUD
-- [ ] Add user authentication.
-- [ ] Store user data in the database
+- [x] Conversation CRUD
+- [x] Add user authentication.
+- [x] Store user data in the database
 - [ ] Testing Stage 2: Thoroughly test the current functionality
   - [ ] Conversation CRUD
   - [ ] Authentication and user data
