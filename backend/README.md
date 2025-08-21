@@ -15,6 +15,7 @@
 - [x] Testing Stage 2: Thoroughly test the current functionality
   - [x] Conversation CRUD
   - [x] Authentication and user data
+- [ ] Dashboard: Other crud operations
 
 ## Far future
 
