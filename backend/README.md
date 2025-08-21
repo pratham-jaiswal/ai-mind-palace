@@ -15,14 +15,11 @@
 - [x] Testing Stage 2: Thoroughly test the current functionality
   - [x] Conversation CRUD
   - [x] Authentication and user data
-- [ ] Extracting text and images from PDFs
-- [ ] Generating AI images descriptions
-- [ ] Saving images metadata in the database, along with "source_file" in additional_info
-- [ ] Vectorization of text and images (descriptions)
 
 ## Far future
 
-- Images (not sourced from PDFs)
+- Images
+- PDF
 - DOCX
 - Audio
 - Video
