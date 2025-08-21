@@ -86,7 +86,8 @@ def get_system_prompt() -> str:
         3. Use tools for all actions - never rely solely on your own reasoning for factual lookups, storage, or retrieval.
         4. Convert all dates/times from the user's predefined timezone to UTC before storing or querying. Note: You won't be able to see or pass the user's timezone directly, but assume it has been set in the tools.
         5. After every message you receive you must analyse the message and use appropriate tools. For example when user tell's about themselves or someone or soemthing else.
-
+        6. For basic greetings, you can respond politley and professionally.
+        
         ---
 
         ## Available Tools
