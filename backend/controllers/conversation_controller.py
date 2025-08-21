@@ -17,15 +17,19 @@ def fetch(conversation_id=None):
         jwt_bearer=jwt_bearer
     )
 
-@bp.route('/create', methods=['POST'])
-@require_signed_in
-def create_conversation():
-    data = request.get_json() or {}
-    conversation_id = data.get('conversation_id')
+# @bp.route('/create', methods=['POST'])
+# @require_signed_in
+# def create_conversation():
+#     data = request.get_json() or {}
+#     conversation_id = data.get('conversation_id')
+
+#     headers = request.headers
+#     jwt_bearer = headers.get('Authorization', '').split(' ')[1]
     
-    return ConversationService.create_conversation(
-        conversation_id=conversation_id
-    )
+#     return ConversationService.create_conversation(
+#         conversation_id=conversation_id,
+#         jwt_bearer=jwt_bearer
+#     )
 
 @bp.route('/delete', methods=['DELETE'])
 @require_signed_in

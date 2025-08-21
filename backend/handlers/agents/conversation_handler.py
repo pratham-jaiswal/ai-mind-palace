@@ -1,5 +1,6 @@
 from models import db, Conversation
 from typing import Literal
+from sqlalchemy import func, and_
 
 class ConversationHandler:
     def __init__(self, user_id):
@@ -33,16 +34,35 @@ class ConversationHandler:
         Returns:
             List[Conversation]: A list of user's conversation objects for the given thread ID.
         """
-        return Conversation.query.filter_by(thread_id=thread_id, user_id=self.user_id).all()
+        return Conversation.query.filter_by(thread_id=thread_id, user_id=self.user_id).order_by(Conversation.id).all()
     
-    def get_all_conversations(self):
+    def get_all_conversation_threads(self):
         """
         Get all conversations for the user.
 
         Returns:
             List[Conversation]: A list of user's conversation objects.
         """
-        return Conversation.query.filter_by(user_id=self.user_id).all()
+        subq = (db.session.query(
+                Conversation.thread_id,
+                func.max(Conversation.date).label("max_date")
+            )
+            .filter(Conversation.user_id == self.user_id)
+            .group_by(Conversation.thread_id)
+            .subquery()
+        )
+        return (
+            Conversation.query
+            .join(
+                subq,
+                and_(
+                    Conversation.thread_id == subq.c.thread_id,
+                    Conversation.date == subq.c.max_date
+                )
+            )
+            .order_by(Conversation.id.desc())
+            .all()
+        )
 
     def delete_conversations_by_thread_id(self, thread_id: str):
         """

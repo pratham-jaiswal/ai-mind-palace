@@ -1,7 +1,7 @@
 from handlers.agents.conversation_handler import ConversationHandler
 from utils.auth_handlers import get_user_data
 from controllers.utils import jsonify_error, jsonify_ok
-from schemas.conversation import ConversationSchema
+from schemas.conversation import ConversationSchema, ConversationMetadataSchema
 import traceback
 
 class ConversationService:
@@ -15,15 +15,18 @@ class ConversationService:
             
             result = None
             if conversation_id:
-                result = ConversationSchema().dump(
+                result = ConversationSchema(many=True).dump(
                     ConversationHandler(user_id=user_id).get_conversations_by_thread_id(
                         thread_id=conversation_id
                     )
                 )
             else:
-                result = ConversationSchema(many=True).dump(
-                    ConversationHandler(user_id=user_id).get_all_conversations()
+                result = ConversationMetadataSchema(many=True).dump(
+                    ConversationHandler(user_id=user_id).get_all_conversation_threads()
                 )
+                for item in result:
+                    item["title"] = item["thread_id"].replace(f"user-{user_id}--", "")
+
             return jsonify_ok(result)
         except Exception as e:
             traceback.print_exc()
