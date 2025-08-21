@@ -1,0 +1,23 @@
+:root {
+  --bg-color: #555879;
+  --bg2-color: #2f3146;
+  --color-alpha: #0000007e;
+  --text-color: #fffbde;
+  --text-color2: #dadada;
+  --subtext-color: #fffbde;
+  --header-bg: #555879;
+  --border-color: #fffbde;
+  --input-border: #ccc;
+  --input-bg: #fffbde;
+  --input-text: #1c1c1c;
+  --user-msg: #98a1bc;
+  --user-text: #fffbde;
+  --ai-msg: rgba(0, 0, 0, 0);
+  --ai-text: #000;
+  --ai-border: #fffbde;
+  --reload-color: #fffbde;
+  --modal-overlay: #00000099;
+  --modal-bg: #2f3146;
+  --shadow-color: #0000004d;
+  --delete-color: #d9534f;
+}
