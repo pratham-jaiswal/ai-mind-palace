@@ -2,8 +2,8 @@
 
 ## 📦 Requirements
 
-* Node.js 22+
-* npm / yarn / pnpm
+- Node.js 22
+- npm / yarn / pnpm
 
 ## ⚙️ Installation & Setup
 
@@ -20,6 +20,11 @@ Create a `.env` file in `frontend/` with:
 VITE_BACKEND_URL=http://127.0.0.1:5000
 VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key_here
 ```
+
+## 🔑 Obtaining API Keys
+
+- **Clerk Keys** →
+  - `VITE_CLERK_PUBLISHABLE_KEY` → Head to [Clerk Dashboard](https://dashboard.clerk.com/) -> Select your application -> Configure -> API keys
 
 ## ▶️ Run
 
