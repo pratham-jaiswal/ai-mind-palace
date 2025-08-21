@@ -6,6 +6,7 @@
 - PostgreSQL
 - FAISS
 - pip
+- OpenAI/Gemini/Groq api keys (any one will suffice)
 
 ## ⚙️ Installation & Setup
 
@@ -24,9 +25,9 @@ Create a `.env` file in `backend/` with:
 
 ```env
 DATABASE_URL=postgresql://username:password@localhost:5432/dbname
-OPENAI_API_KEY=your_openai_api_key_here (Obtain from [here](https://platform.openai.com/settings/organization/api-keys))
-GOOGLE_API_KEY=your_gemini_api_key_here (Obtain from [here](https://console.groq.com/keys))
-GROQ_API_KEY=your_groq_api_key_here (Obtain from [here](https://aistudio.google.com/apikey))
+OPENAI_API_KEY=your_openai_api_key_here
+GOOGLE_API_KEY=your_gemini_api_key_here
+GROQ_API_KEY=your_groq_api_key_here
 
 DEV_ENV=True
 
