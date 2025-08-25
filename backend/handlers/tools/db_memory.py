@@ -319,7 +319,7 @@ class DbPersonMemory:
             Optional[List[dict]]: A list of dictionaries containing the id, name, and last_mentioned date of all people created/added by the user, or None if no people exist.
         """
         people = db.session.query(
-            Person.id, Person.name, Person.last_mentioned
+            Person.id, Person.name, Person.last_mentioned, Person.additional_info
         ).filter_by(user_id=self.user_id).all()
         
         if not people:
