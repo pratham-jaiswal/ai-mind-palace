@@ -46,3 +46,13 @@ This project is licensed under the **AI Mind Palace License (MIT + NC)**.
 - **Commercial use is not permitted.**
 
 See the full [LICENSE](./LICENSE) file for details.
+
+## 💖 Support My Work
+
+If this project was useful to you in any way that does not violate the license, such as for a school or college project, personal use, or learning, please consider supporting my work.
+
+You can make a **one-time, non-subscription donation** by buying a post from my [Patreon collection](https://www.patreon.com/collection/1819237).
+
+Your support helps me keep creating and sharing open-source projects like this. Thank you! 🙏
+
+<a href="https://www.patreon.com/MaxxDevs"><img width="200px" src="https://res.cloudinary.com/dhzmockpa/image/upload/v1745678642/PATREON_Lockup_Horizontal_BLACK_RGB_rgl86v.svg" alt="Patreon" /></a>
