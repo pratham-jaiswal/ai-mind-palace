@@ -32,3 +32,8 @@ dist-ssr
 *.sln
 *.sw?
 .aiexclude
+
+# extras
+
+*.pdf
+extractor.py

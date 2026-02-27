@@ -72,4 +72,5 @@ py app.py
 - [x] Testing Stage 2: Thoroughly test the current functionality
   - [x] Conversation CRUD
   - [x] Authentication and user data
-- [ ] Dashboard: Other crud operations
+- [x] Dashboard: Other crud operations
+- [ ] Multiagent structure for more efficiency

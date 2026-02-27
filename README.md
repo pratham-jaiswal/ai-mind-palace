@@ -3,7 +3,7 @@
 ### Your second brain – powered by Agentic AI and memory management
 
 AI Mind Palace is an experimental **personal AI memory system**.
-It combines **chat** with a **structured memory architecture**:
+It combines **chat** with a **structured memory architecture**, and uses the following:
 
 - **Vector memory** for semantic recall.
 - **Database memory** for people, decisions, and project/task management.
@@ -17,18 +17,13 @@ It combines **chat** with a **structured memory architecture**:
 - 💬 **Chat** with an AI agent.
 - 🧠 **Manage memory**:
 
-  1. Vector memory (FAISS) – store and retrieve knowledge.
-  2. Database memory – structured tracking of people, decisions, and projects/tasks.
+  1. **Vector memory** (FAISS) – store and retrieve knowledge.
+  2. **Database memory** – structured tracking of people, decisions, and projects/tasks.
+  3. **Visual Mind Map** – interactive graph of your data.
+  4. **Knowledge Dashboard** – CRUD access to structured memory.
 
 - 🔑 **Authentication** via Clerk.
 - 📂 **Multiple chat threads** with **shared memory** (beyond per-conversation history).
-
----
-
-## 📋 To-Do
-
-- [ ] Dashboard UI & APIs
-- Detailed per-service TODOs are in the `backend/` and `frontend/` folders.
 
 ---
 
@@ -37,13 +32,43 @@ It combines **chat** with a **structured memory architecture**:
 Each subproject (`backend`, `frontend`) has its own README with installation & setup.
 Check them out to run locally.
 
+---
+
+## Demo
+
+<details>
+  <summary>Click to expand/collapse</summary>
+
+  | <img src="https://file.garden/aATRZRm2KRQR_hmq/AI%20Mind%20Palace/28%20feb%202026/Home%20(not%20logged%20in)" width="600"> |
+  |:--:|
+  | <i>Home</i>|
+
+  | <img src="https://file.garden/aATRZRm2KRQR_hmq/AI%20Mind%20Palace/28%20feb%202026/Chat" width="600"> |
+  |:--:|
+  | <i>Chat</i>|
+
+  | <img src="https://file.garden/aATRZRm2KRQR_hmq/AI%20Mind%20Palace/28%20feb%202026/Dashboard" width="600"> |
+  |:--:|
+  | <i>Dashboard</i>|
+
+  | <img src="https://file.garden/aATRZRm2KRQR_hmq/AI%20Mind%20Palace/28%20feb%202026/MindMap" width="600"> |
+  |:--:|
+  | <i>Mind Map</i>|
+  
+</details>
+
+---
+
 ## 📜 License
 
-This project is licensed under the **AI Mind Palace License (MIT + NC)**.
+This project is licensed under the **AI Mind Palace Personal Use License**.
 
 - Free for personal and educational use.
 - Forks and modifications allowed **with attribution**.
 - **Commercial use is not permitted.**
+
+### Commercial Licensing
+For commercial licensing inquiries or to purchase a license for business use, please contact the repository owner.
 
 See the full [LICENSE](./LICENSE) file for details.
 

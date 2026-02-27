@@ -38,4 +38,5 @@ npm run dev
 - [x] Sidebar for conversation list
 - [x] New Chat icon
 - [x] Delete Chat
-- [ ] Dashboard
+- [x] Dashboard CRUD (People, Projects, Decisions)
+- [x] Mind Map Graph UI
