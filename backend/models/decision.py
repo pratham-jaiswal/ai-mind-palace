@@ -13,4 +13,11 @@ class Decision(db.Model):
     date = db.Column(db.DateTime, default=datetime.utcnow)
 
     def to_dict(self):
-        return {"id": self.id, "user_id": self.user_id, "decision_text": self.decision_text, "date": self.date.isoformat()}
+        return {
+            "id": self.id, 
+            "user_id": self.user_id, 
+            "decision_name": self.decision_name,
+            "decision_text": self.decision_text, 
+            "additional_info": self.additional_info,
+            "date": self.date.isoformat() if self.date else None
+        }

@@ -5,6 +5,7 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .app-header {
@@ -20,6 +21,30 @@
 .header-right {
   display: flex;
   align-items: center;
+}
+
+.header-nav {
+  margin-left: 20px;
+  display: flex;
+  gap: 15px;
+}
+
+.header-nav a {
+  text-decoration: none;
+  color: var(--text-color);
+  opacity: 0.7;
+  font-weight: 500;
+}
+
+.header-nav a:hover {
+  opacity: 1;
+}
+
+.header-nav a.active {
+  opacity: 1;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
 }
 
 .logo {
@@ -47,4 +72,40 @@
 .signin-btn:hover {
   background-color: var(--text-color);
   color: var(--bg-color);
+}
+
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.signout-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  background: linear-gradient(135deg, var(--bg-color), var(--header-bg));
+  padding: 2rem;
+}
+
+.signout-prompt h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  background: linear-gradient(45deg, #FFFBDE, #a8c0ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.signout-prompt p {
+  font-size: 1.2rem;
+  color: var(--subtext-color);
+  max-width: 500px;
+  line-height: 1.6;
 }

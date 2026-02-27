@@ -13,4 +13,11 @@ class Person(db.Model):
     last_mentioned = db.Column(db.DateTime, default=datetime.utcnow)
 
     def to_dict(self):
-        return {"id": self.id, "user_id": self.user_id, "name": self.name, "notes": self.notes, "last_mentioned": self.last_mentioned.isoformat()}
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "name": self.name,
+            "notes": self.notes,
+            "additional_info": self.additional_info,
+            "last_mentioned": self.last_mentioned.isoformat()
+        }

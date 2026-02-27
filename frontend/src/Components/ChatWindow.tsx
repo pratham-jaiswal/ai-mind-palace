@@ -25,7 +25,7 @@ const ChatWindow = () => {
   const [threadId, setThreadId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
   const [conversations, setConversations] = useState<ConversationMetadata[]>(
     []
@@ -69,8 +69,9 @@ const ChatWindow = () => {
   }, [getToken]);
 
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    if (messagesContainerRef.current) {
+      const container = messagesContainerRef.current;
+      container.scrollTop = container.scrollHeight;
     }
   }, [messages]);
 
@@ -81,8 +82,7 @@ const ChatWindow = () => {
       setThreadId(selectedThreadId);
       const token = await getToken();
       const res = await axios.get(
-        `${
-          import.meta.env.VITE_BACKEND_URL
+        `${import.meta.env.VITE_BACKEND_URL
         }/conversation/fetch/${selectedThreadId}`,
         {
           headers: {
@@ -124,10 +124,11 @@ const ChatWindow = () => {
         `${import.meta.env.VITE_BACKEND_URL}/invoke/`,
         {
           user_query: input,
-          provider: "gemini",
-          model: "gemini-2.0-flash",
+          provider: "openai",
+          model: "gpt-4.1-mini",
           temperature: 0.3,
           thread_id: threadId,
+          debug: true
         },
         {
           headers: {
@@ -357,7 +358,7 @@ const ChatWindow = () => {
           </div>
         ) : (
           <>
-            <div className="messages">
+            <div className="messages" ref={messagesContainerRef}>
               {messages.map((msg, idx) => (
                 <div key={idx} className={`message ${msg.role}`}>
                   {msg.role === "ai" ? (
@@ -367,7 +368,6 @@ const ChatWindow = () => {
                   )}
                 </div>
               ))}
-              <div ref={messagesEndRef} />{" "}
             </div>
             <div className="input-container">
               <input

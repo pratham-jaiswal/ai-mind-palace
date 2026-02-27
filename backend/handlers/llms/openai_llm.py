@@ -1,7 +1,7 @@
 from langchain_openai import ChatOpenAI
 from .llm_models import openai_models
 
-def get_llm(model: str = "gpt-4.1-nano", temperature: float = 0.3) -> ChatOpenAI:
+def get_llm(model: str = "gpt-4.1-mini", temperature: float = 0.3) -> ChatOpenAI:
     """
     Get an OpenAI LLM instance.
     Args:

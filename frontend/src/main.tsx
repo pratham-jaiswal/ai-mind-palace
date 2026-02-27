@@ -10,10 +10,14 @@ if (!PUBLISHABLE_KEY) {
   throw new Error("Missing Publishable Key");
 }
 
+import { BrowserRouter } from 'react-router-dom';
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
-      <App />
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </ClerkProvider>
   </StrictMode>
 );
