@@ -21,7 +21,7 @@ class VectorMemoryTools:
 
         return memory_index
 
-    def search_memory(self, query: str, source: str, k: int = 5):
+    def search_memory(self, query: str, source: str = None, k: int = 5):
         """
         Search the vector memory for relevant documents.
         
@@ -40,4 +40,26 @@ class VectorMemoryTools:
 
         results = FaissHandler(self.user_id).search_faiss_index(query, source, k)
         return results
+
+    def get_all_memories(self):
+        """
+        Fetch all vector memories for the user irrespective of query.
+        
+        Returns:
+            list: A list of all documents belonging to the user.
+        """
+        results = FaissHandler(self.user_id).get_all_documents()
+        return results
+        
+    def delete_memory(self, memory_id: str):
+        """
+        Delete a memory by its underlying FAISS document ID.
+        
+        Args:
+            memory_id (str): The ID of the document to delete.
+            
+        Returns:
+            bool: True if deletion was successful.
+        """
+        return FaissHandler(self.user_id).delete_document(memory_id)
     

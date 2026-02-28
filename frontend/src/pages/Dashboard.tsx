@@ -10,58 +10,142 @@ export default function Dashboard() {
   const [people, setPeople] = useState<any[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
   const [decisions, setDecisions] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [memories, setMemories] = useState<any[]>([]);
+  const [selfPerson, setSelfPerson] = useState<any>(null);
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+
+  const [loadingPeople, setLoadingPeople] = useState(true);
+  const [loadingSelf, setLoadingSelf] = useState(true);
+  const [loadingProjects, setLoadingProjects] = useState(true);
+  const [loadingDecisions, setLoadingDecisions] = useState(true);
+  const [loadingMemories, setLoadingMemories] = useState(true);
+
+  // Pagination State
+  const [peoplePage, setPeoplePage] = useState(1);
+  const [projectsPage, setProjectsPage] = useState(1);
+  const [decisionsPage, setDecisionsPage] = useState(1);
+  const [memoriesPage, setMemoriesPage] = useState(1);
+
+  const [peopleTotal, setPeopleTotal] = useState(0);
+  const [projectsTotal, setProjectsTotal] = useState(0);
+  const [decisionsTotal, setDecisionsTotal] = useState(0);
+  const [memoriesTotal, setMemoriesTotal] = useState(0);
+
+  const defaultLimit = parseInt(import.meta.env.VITE_PAGINATION_LIMIT || '10', 10);
+  const limit = isNaN(defaultLimit) ? 10 : defaultLimit;
 
   // Modal State
-  const [modalType, setModalType] = useState<"person" | "project" | "decision" | null>(null);
+  const [modalType, setModalType] = useState<"person" | "project" | "decision" | "memory" | null>(null);
   const [modalMode, setModalMode] = useState<"add" | "edit">("add");
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<number | string | null>(null);
 
   // Form State
   const [formData, setFormData] = useState<any>({});
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    fetchData();
-  }, [getToken]);
+    fetchSelf();
+    fetchPeople();
+    fetchProjects();
+    fetchDecisions();
+    fetchMemories();
+  }, [getToken]); // Only run on mount or token change
 
-  const fetchData = async () => {
-    setLoading(true);
+  // When pagination or search query changes, fetch specific data
+  useEffect(() => { fetchPeople(); }, [peoplePage, debouncedSearchQuery]);
+  useEffect(() => { fetchProjects(); }, [projectsPage, debouncedSearchQuery]);
+  useEffect(() => { fetchDecisions(); }, [decisionsPage, debouncedSearchQuery]);
+  useEffect(() => { fetchMemories(); }, [memoriesPage, debouncedSearchQuery]);
+
+  // Reset pagination to page 1 whenever search query changes
+  useEffect(() => {
+    setPeoplePage(1);
+    setProjectsPage(1);
+    setDecisionsPage(1);
+    setMemoriesPage(1);
+  }, [debouncedSearchQuery]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
+
+  const fetchSelf = async () => {
+    setLoadingSelf(true);
     try {
       const token = await getToken();
-      const headers = { Authorization: `Bearer ${token}` };
-
-      const [resPeople, resProjects, resDecisions] = await Promise.all([
-        axios.get(`${BACKEND_URL}/people/`, { headers }),
-        axios.get(`${BACKEND_URL}/projects/`, { headers }),
-        axios.get(`${BACKEND_URL}/decisions/`, { headers })
-      ]);
-
-      const fetchedPeople = resPeople.data.result || [];
-      fetchedPeople.sort((a: any, b: any) => {
-        const aName = (a.name || "").toLowerCase();
-        const bName = (b.name || "").toLowerCase();
-        const isASelf = aName === "self" || aName === "me";
-        const isBSelf = bName === "self" || bName === "me";
-        if (isASelf && !isBSelf) return -1;
-        if (!isASelf && isBSelf) return 1;
-        return aName.localeCompare(bName);
-      });
-
-      setPeople(fetchedPeople);
-      setProjects(resProjects.data.result || []);
-
-      const fetchedDecisions = resDecisions.data.result || [];
-      fetchedDecisions.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
-      setDecisions(fetchedDecisions);
+      const res = await axios.get(`${BACKEND_URL}/people/self`, { headers: { Authorization: `Bearer ${token}` } });
+      setSelfPerson(res.data.result);
     } catch (err) {
-      console.error("Error fetching dashboard data", err);
+      console.error(err);
+      setSelfPerson(null);
     } finally {
-      setLoading(false);
+      setLoadingSelf(false);
     }
   };
 
-  const openModal = (type: "person" | "project" | "decision", mode: "add" | "edit", initialData: any = {}) => {
+  const fetchPeople = async () => {
+    setLoadingPeople(true);
+    try {
+      const token = await getToken();
+      const res = await axios.get(`${BACKEND_URL}/people/?page=${peoplePage}&limit=${limit}&q=${encodeURIComponent(debouncedSearchQuery)}`, { headers: { Authorization: `Bearer ${token}` } });
+      const payload = res.data.result || {};
+      const fetchedPeople = payload.result || [];
+      // Note: "self" and "me" are now excluded gracefully by the backend SQL filter.
+      setPeople(fetchedPeople);
+      setPeopleTotal(payload.total || 0);
+    } catch (err) { console.error(err); } finally { setLoadingPeople(false); }
+  };
+
+  const fetchProjects = async () => {
+    setLoadingProjects(true);
+    try {
+      const token = await getToken();
+      const res = await axios.get(`${BACKEND_URL}/projects/?page=${projectsPage}&limit=${limit}&q=${encodeURIComponent(debouncedSearchQuery)}`, { headers: { Authorization: `Bearer ${token}` } });
+      const payload = res.data.result || {};
+      setProjects(payload.result || []);
+      setProjectsTotal(payload.total || 0);
+    } catch (err) { console.error(err); } finally { setLoadingProjects(false); }
+  };
+
+  const fetchDecisions = async () => {
+    setLoadingDecisions(true);
+    try {
+      const token = await getToken();
+      const res = await axios.get(`${BACKEND_URL}/decisions/?page=${decisionsPage}&limit=${limit}&q=${encodeURIComponent(debouncedSearchQuery)}`, { headers: { Authorization: `Bearer ${token}` } });
+      const payload = res.data.result || {};
+      const fetchedDecisions = payload.result || [];
+      fetchedDecisions.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      setDecisions(fetchedDecisions);
+      setDecisionsTotal(payload.total || 0);
+    } catch (err) { console.error(err); } finally { setLoadingDecisions(false); }
+  };
+
+  const fetchMemories = async () => {
+    setLoadingMemories(true);
+    try {
+      const token = await getToken();
+      const res = await axios.get(`${BACKEND_URL}/memories/?page=${memoriesPage}&limit=${limit}&q=${encodeURIComponent(debouncedSearchQuery)}`, { headers: { Authorization: `Bearer ${token}` } });
+      const payload = res.data.result || {};
+      setMemories(payload.result || []);
+      setMemoriesTotal(payload.total || 0);
+    } catch (err) { console.error(err); } finally { setLoadingMemories(false); }
+  };
+
+  // const fetchData = () => {
+  //   fetchSelf();
+  //   fetchPeople();
+  //   fetchProjects();
+  //   fetchDecisions();
+  //   fetchMemories();
+  // };
+
+  const openModal = (type: "person" | "project" | "decision" | "memory", mode: "add" | "edit", initialData: any = {}) => {
     setModalType(type);
     setModalMode(mode);
     setEditingId(initialData.id || null);
@@ -93,6 +177,10 @@ export default function Dashboard() {
         decision_text: initialData.decision_text || "",
         additional_info: addInfoStr === "{}" ? "" : addInfoStr
       });
+    } else if (type === "memory") {
+      setFormData({
+        content: initialData.content || ""
+      });
     }
   };
 
@@ -102,7 +190,7 @@ export default function Dashboard() {
       const token = await getToken();
       const headers = { Authorization: `Bearer ${token}` };
 
-      let endpoint = `${BACKEND_URL}/${modalType === "person" ? "people" : modalType + "s"}`;
+      let endpoint = modalType === "memory" ? `${BACKEND_URL}/memories` : `${BACKEND_URL}/${modalType === "person" ? "people" : modalType + "s"}`;
       let payload: any = {};
 
       if (modalType === "person") {
@@ -128,13 +216,15 @@ export default function Dashboard() {
         };
       } else if (modalType === "decision") {
         let parsedInfo = {};
-        if (formData.additional_info) {
-          parsedInfo = JSON.parse(formData.additional_info);
-        }
+        if (formData.additional_info) parsedInfo = JSON.parse(formData.additional_info);
         payload = {
           decision_name: formData.decision_name || "Decision",
           decision_text: formData.decision_text,
           additional_info: parsedInfo
+        };
+      } else if (modalType === "memory") {
+        payload = {
+          content: formData.content
         };
       }
 
@@ -145,7 +235,14 @@ export default function Dashboard() {
       }
 
       closeModal();
-      fetchData(); // Refresh all
+      if (modalType === "person") {
+        const n = (formData.name || "").toLowerCase();
+        if (n === "self" || n === "me") fetchSelf();
+        else fetchPeople();
+      }
+      else if (modalType === "project") fetchProjects();
+      else if (modalType === "decision") fetchDecisions();
+      else if (modalType === "memory") fetchMemories();
     } catch (err) {
       console.error("Error saving entity", err);
       alert("Failed to save. Make sure your JSON (if any) is valid.");
@@ -158,20 +255,26 @@ export default function Dashboard() {
     if (!editingId || !modalType) return;
     if (!confirm(`Are you sure you want to delete this ${modalType}?`)) return;
 
-    setSaving(true);
+    setDeleting(true);
     try {
       const token = await getToken();
       const headers = { Authorization: `Bearer ${token}` };
-      const endpoint = `${BACKEND_URL}/${modalType === "person" ? "people" : modalType + "s"}`;
+      const endpoint = modalType === "memory" ? `${BACKEND_URL}/memories` : `${BACKEND_URL}/${modalType === "person" ? "people" : modalType + "s"}`;
 
       await axios.delete(`${endpoint}/${editingId}`, { headers });
       closeModal();
-      fetchData();
+      if (modalType === "person") {
+        if (selfPerson && editingId === selfPerson.id) fetchSelf();
+        else fetchPeople();
+      }
+      else if (modalType === "project") fetchProjects();
+      else if (modalType === "decision") fetchDecisions();
+      else if (modalType === "memory") fetchMemories();
     } catch (err) {
       console.error("Error deleting entity", err);
       alert("Failed to delete.");
     } finally {
-      setSaving(false);
+      setDeleting(false);
     }
   };
 
@@ -183,9 +286,9 @@ export default function Dashboard() {
   const renderAdditionalInfo = (info: any) => {
     if (!info || Object.keys(info).length === 0) return null;
     return (
-      <div style={{ marginTop: '0.5rem', padding: '0.5rem', background: 'rgba(0,0,0,0.2)', borderRadius: '4px', fontSize: '0.8rem' }}>
+      <div style={{ marginTop: '0.5rem', padding: '0.5rem', background: 'rgba(0,0,0,0.2)', borderRadius: '4px', fontSize: '0.8rem', width: '100%', boxSizing: 'border-box' }}>
         <strong style={{ opacity: 0.8, display: 'block', marginBottom: '4px' }}>Additional Info:</strong>
-        <ul style={{ margin: 0, paddingLeft: '1.2rem', opacity: 0.9 }}>
+        <ul style={{ margin: 0, paddingLeft: '1.2rem', opacity: 0.9, wordBreak: 'break-all', overflowWrap: 'anywhere' }}>
           {Object.entries(info).map(([key, val]) => (
             <li key={key}><strong>{key}:</strong> {String(val)}</li>
           ))}
@@ -196,9 +299,33 @@ export default function Dashboard() {
 
   const headerStyle = { display: 'flex', justifyContent: 'space-between', alignItems: 'center' };
   const addBtnStyle = { background: 'var(--text-color)', color: 'var(--bg-color)', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 'bold' };
-  const cardStyle = { background: 'var(--header-bg)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)', position: 'relative' as any };
+  const cardStyle = { background: 'var(--header-bg)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)', position: 'relative' as any, wordBreak: 'break-word' as any, overflowWrap: 'anywhere' as any };
 
-  if (loading && people.length === 0) {
+  const renderPagination = (currentPage: number, totalItems: number, setPage: (p: number) => void) => {
+    const totalPages = Math.ceil(totalItems / limit);
+    if (totalPages <= 1) return null;
+    return (
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem' }}>
+        <button
+          style={{ ...addBtnStyle, opacity: currentPage === 1 ? 0.5 : 1 }}
+          disabled={currentPage === 1}
+          onClick={() => setPage(currentPage - 1)}
+        >
+          &lt; Previous
+        </button>
+        <span style={{ fontSize: '0.9rem', opacity: 0.8 }}>Page {currentPage} of {totalPages}</span>
+        <button
+          style={{ ...addBtnStyle, opacity: currentPage === totalPages ? 0.5 : 1 }}
+          disabled={currentPage === totalPages}
+          onClick={() => setPage(currentPage + 1)}
+        >
+          Next &gt;
+        </button>
+      </div>
+    );
+  };
+
+  if (loadingPeople && people.length === 0 && loadingProjects && projects.length === 0) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
         <PuffLoader color="#FFFBDE" size={100} />
@@ -208,15 +335,81 @@ export default function Dashboard() {
 
   return (
     <div style={{ padding: '2rem', height: '100%', overflowY: 'auto' }}>
-      <h1>Knowledge Dashboard</h1>
-      <p style={{ opacity: 0.7, marginBottom: '2rem' }}>Your Second Brain's structured entities.</p>
+      {/* <h1>Knowledge Dashboard</h1> */}
+      {/* <p style={{ opacity: 0.7, marginBottom: '2rem' }}>Your Second Brain's structured entities.</p> */}
+
+      <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ position: 'relative', width: '100%', maxWidth: '600px' }}>
+          <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }}>🔍</span>
+          <input
+            type="text"
+            placeholder="Search Knowledge Base..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{ width: '100%', padding: '12px 20px 12px 45px', fontSize: '1rem', borderRadius: '24px', border: '1px solid var(--border-color)', background: 'rgba(0,0,0,0.1)', color: 'var(--text-color)', outline: 'none', transition: 'box-shadow 0.2s', boxSizing: 'border-box' }}
+            onFocus={(e) => e.target.style.boxShadow = '0 0 0 2px var(--border-color)'}
+            onBlur={(e) => e.target.style.boxShadow = 'none'}
+          />
+        </div>
+      </div>
+
+      {/* Your Profile Section */}
+      <section style={{ marginBottom: '2rem' }}>
+        <div style={{ ...headerStyle, borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem' }}>
+          <h2>🧑 Your Profile {loadingSelf && <PuffLoader color="#FFFBDE" size={20} cssOverride={{ display: 'inline-block', marginLeft: '10px' }} />}</h2>
+          {!selfPerson && <button style={addBtnStyle} onClick={() => openModal("person", "add", { name: "me" })}>+ Add Profile</button>}
+        </div>
+        <div style={{ marginTop: '1rem' }}>
+          {!selfPerson && !loadingSelf ? (
+            <p style={{ opacity: 0.6 }}>You haven't set up your profile yet.</p>
+          ) : selfPerson ? (
+            <div style={{ ...cardStyle, maxWidth: '600px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div style={{ flex: 1, minWidth: 0, paddingRight: '1rem' }}>
+                <h3 style={{ margin: '0 0 0.5rem 0' }}>{selfPerson.name} {selfPerson.additional_info?.age ? `(${selfPerson.additional_info.age})` : ''}</h3>
+                {(selfPerson.notes && selfPerson.notes.length > 0) && (
+                  <ul style={{ margin: 0, paddingLeft: '1.2rem', opacity: 0.8, fontSize: '0.9rem', paddingBottom: '0.5rem' }}>
+                    {selfPerson.notes.map((n: string, idx: number) => <li key={idx}>{n}</li>)}
+                  </ul>
+                )}
+                {renderAdditionalInfo(
+                  Object.fromEntries(
+                    Object.entries(selfPerson.additional_info || {}).filter(([k]) => k !== 'age')
+                  )
+                )}
+              </div>
+              <button style={{ background: 'transparent', border: 'none', color: 'var(--text-color)', cursor: 'pointer', opacity: 0.6 }} onClick={() => openModal("person", "edit", selfPerson)}>✏️</button>
+            </div>
+          ) : null}
+        </div>
+      </section>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
+
+        {/* Memories Section */}
+        <section>
+          <div style={headerStyle}>
+            <h2>🧠 Memories {loadingMemories && <PuffLoader color="#FFFBDE" size={20} cssOverride={{ display: 'inline-block', marginLeft: '10px' }} />}</h2>
+            <button style={addBtnStyle} onClick={() => openModal("memory", "add")}>+ Add</button>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+            {memories.length === 0 ? <p>No memories found.</p> : memories.map((m, i) => (
+              <div key={i} style={cardStyle}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <p style={{ margin: '0 0 0.5rem 0', opacity: 0.9, fontSize: '0.9rem', whiteSpace: 'pre-wrap', flex: 1 }}>
+                    {m.content}
+                  </p>
+                  <button style={{ background: 'transparent', border: 'none', color: 'var(--text-color)', cursor: 'pointer', opacity: 0.6, marginLeft: '10px' }} onClick={() => openModal("memory", "edit", { id: m.metadata.id, content: m.content })}>✏️</button>
+                </div>
+              </div>
+            ))}
+          </div>
+          {renderPagination(memoriesPage, memoriesTotal, setMemoriesPage)}
+        </section>
 
         {/* People Section */}
         <section>
           <div style={headerStyle}>
-            <h2>👥 People</h2>
+            <h2>👥 People {loadingPeople && <PuffLoader color="#FFFBDE" size={20} cssOverride={{ display: 'inline-block', marginLeft: '10px' }} />}</h2>
             <button style={addBtnStyle} onClick={() => openModal("person", "add")}>+ Add</button>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
@@ -256,12 +449,13 @@ export default function Dashboard() {
               );
             })}
           </div>
+          {renderPagination(peoplePage, peopleTotal, setPeoplePage)}
         </section>
 
         {/* Projects Section */}
         <section>
           <div style={headerStyle}>
-            <h2>🚀 Projects</h2>
+            <h2>🚀 Projects {loadingProjects && <PuffLoader color="#FFFBDE" size={20} cssOverride={{ display: 'inline-block', marginLeft: '10px' }} />}</h2>
             <button style={addBtnStyle} onClick={() => openModal("project", "add")}>+ Add</button>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
@@ -278,12 +472,13 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
+          {renderPagination(projectsPage, projectsTotal, setProjectsPage)}
         </section>
 
         {/* Decisions Section */}
         <section>
           <div style={headerStyle}>
-            <h2>🎯 Decisions</h2>
+            <h2>🎯 Decisions {loadingDecisions && <PuffLoader color="#FFFBDE" size={20} cssOverride={{ display: 'inline-block', marginLeft: '10px' }} />}</h2>
             <button style={addBtnStyle} onClick={() => openModal("decision", "add")}>+ Add</button>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
@@ -299,6 +494,7 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
+          {renderPagination(decisionsPage, decisionsTotal, setDecisionsPage)}
         </section>
 
       </div>
@@ -307,9 +503,16 @@ export default function Dashboard() {
       {modalType && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div style={{ background: 'var(--modal-bg, #2a2a2a)', padding: '2rem', borderRadius: '12px', width: '450px', maxWidth: '90%', maxHeight: '90vh', overflowY: 'auto' }}>
-            <h3 style={{ marginTop: 0 }}>{modalMode === "add" ? "Add New" : "Edit"} {modalType === "person" ? "Person" : modalType === "project" ? "Project" : "Decision"}</h3>
+            <h3 style={{ marginTop: 0 }}>{modalMode === "add" ? "Add New" : "Edit"} {modalType === "person" ? "Person" : modalType === "project" ? "Project" : modalType === "memory" ? "Memory" : "Decision"}</h3>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+
+              {modalType === "memory" && (
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '4px', opacity: 0.8 }}>Memory Content *</label>
+                  <textarea style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--header-bg)', color: 'var(--text-color)', minHeight: '120px', resize: 'vertical' }} value={formData.content || ''} onChange={e => setFormData({ ...formData, content: e.target.value })} />
+                </div>
+              )}
 
               {modalType === "person" && (
                 <>
@@ -375,14 +578,14 @@ export default function Dashboard() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem' }}>
               <div>
                 {modalMode === "edit" && (
-                  <button style={{ padding: '6px 12px', background: 'rgba(255, 59, 48, 0.2)', border: '1px solid rgba(255, 59, 48, 0.5)', color: '#ff3b30', borderRadius: '6px', cursor: 'pointer' }} onClick={handleDelete} disabled={saving}>
-                    Delete
+                  <button style={{ padding: '6px 12px', background: 'rgba(255, 59, 48, 0.2)', border: '1px solid rgba(255, 59, 48, 0.5)', color: '#ff3b30', borderRadius: '6px', cursor: 'pointer' }} onClick={handleDelete} disabled={saving || deleting}>
+                    {deleting ? "Deleting..." : "Delete"}
                   </button>
                 )}
               </div>
               <div style={{ display: 'flex', gap: '10px' }}>
-                <button style={{ padding: '6px 12px', background: 'transparent', border: '1px solid var(--border-color)', color: 'white', borderRadius: '6px', cursor: 'pointer' }} onClick={closeModal}>Cancel</button>
-                <button style={{ padding: '6px 16px', background: '#FFFBDE', border: 'none', color: '#1a1a1a', fontWeight: 'bold', borderRadius: '6px', cursor: 'pointer' }} onClick={handleSave} disabled={saving}>
+                <button style={{ padding: '6px 12px', background: 'transparent', border: '1px solid var(--border-color)', color: 'white', borderRadius: '6px', cursor: 'pointer' }} onClick={closeModal} disabled={saving || deleting}>Cancel</button>
+                <button style={{ padding: '6px 16px', background: '#FFFBDE', border: 'none', color: '#1a1a1a', fontWeight: 'bold', borderRadius: '6px', cursor: 'pointer' }} onClick={handleSave} disabled={saving || deleting}>
                   {saving ? "Saving..." : "Save"}
                 </button>
               </div>

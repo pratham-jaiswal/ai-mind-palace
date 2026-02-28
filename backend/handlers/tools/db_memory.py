@@ -332,7 +332,11 @@ class DbPersonMemory:
             "relationship": p.additional_info.get("relationship", "stranger")
         } for p in people]
 
-    def create_person(self, name: str,
+    def create_person(self, name: str, 
+                      relationship: Optional[str] = None, 
+                      locality: Optional[str] = None, 
+                      age: Optional[int] = None, 
+                      knows: Optional[List[dict]] = None,
                       notes: Optional[List[str]] = None, 
                       additional_info: Optional[dict] = None, 
                       last_mentioned_str: Optional[str] = None) -> dict:
@@ -341,6 +345,10 @@ class DbPersonMemory:
 
         Args:
             name (str): The name of the person. Use "Self" for the user themselves.
+            relationship (Optional[str]): Relationship to the user (e.g., 'mother'). Defaults to None.
+            locality (Optional[str]): Their locality or location. Defaults to None.
+            age (Optional[int]): Their age in years. Defaults to None.
+            knows (Optional[List[dict]]): List of dicts specifying people they know (id and name). Defaults to None.
             notes (Optional[List[str]]): Notes about the person.
             additional_info (Optional[dict]): Additional information about the person.
             last_mentioned_str (Optional[str]): The date when the person was last mentioned in "YYYY-MM-DD" format. Defaults to the current date if not provided.
@@ -352,19 +360,35 @@ class DbPersonMemory:
         if last_mentioned_str and isinstance(last_mentioned_str, str):
             last_mentioned = datetime.strptime(last_mentioned_str, "%Y-%m-%d")
 
+        if additional_info is None:
+            additional_info = {}
+            
+        if relationship is not None:
+            additional_info['relationship'] = relationship
+        if locality is not None:
+            additional_info['locality'] = locality
+        if age is not None:
+            additional_info['age'] = age
+        if knows is not None:
+            additional_info['knows'] = knows
+
         new_person = Person(
             user_id=self.user_id,
             name=name,
             notes=notes or [],
-            additional_info=additional_info or {},
+            additional_info=additional_info,
             last_mentioned=last_mentioned
         )
         db.session.add(new_person)
         db.session.commit()
         return PersonSchema().dump(new_person)
     
-    def update_person(self, person_id: int,
+    def update_person(self, person_id: int, 
                       name: Optional[str] = None,
+                      relationship: Optional[str] = None, 
+                      locality: Optional[str] = None, 
+                      age: Optional[int] = None, 
+                      knows: Optional[List[dict]] = None,
                       notes_update: Optional[dict] = None,
                       additional_info: Optional[dict] = None) -> dict:
         """
@@ -372,6 +396,10 @@ class DbPersonMemory:
         Args:
             person_id (int): The ID of the person to update.
             name (Optional[str]): The new name of the person. Use "Self" for the user themselves.
+            relationship (Optional[str]): Relationship to the user. Defaults to None.
+            locality (Optional[str]): Their locality or location. Defaults to None.
+            age (Optional[int]): Their age in years. Defaults to None.
+            knows (Optional[List[dict]]): List of dicts specifying people they know. Will append to existing array if present. Defaults to None.
             notes_update (Optional[dict]): A dictionary specifying the action and data for notes. 
                                            Example: {"action": "add", "data": ["note1", "note2"]} 
                                            Example: {"action": "replace", "data": ["new note1", "new note2"]}
@@ -408,8 +436,21 @@ class DbPersonMemory:
                     if 0 <= index < len(person.notes):
                         del person.notes[index]
         
+        new_additional_info = dict(person.additional_info) if person.additional_info else {}
         if additional_info is not None:
-            person.additional_info = additional_info
+            new_additional_info.update(additional_info)
+
+        if relationship is not None:
+            new_additional_info['relationship'] = relationship
+        if locality is not None:
+            new_additional_info['locality'] = locality
+        if age is not None:
+            new_additional_info['age'] = age
+        if knows is not None:
+            existing_knows = new_additional_info.get('knows', [])
+            new_additional_info['knows'] = existing_knows + knows
+
+        person.additional_info = new_additional_info
         
         person.last_mentioned = datetime.utcnow()
         db.session.commit()
@@ -628,7 +669,9 @@ class DbProjectMemory:
             "last_updated": p.last_updated.isoformat()
         } for p in projects]
     
-    def create_project(self, title: str,
+    def create_project(self, title: str, 
+                       deadline: Optional[str] = None,
+                       members: Optional[List[dict]] = None,
                        description: Optional[str] = None, 
                        additional_info: Optional[dict] = None, 
                        status: str = 'idea', 
@@ -638,6 +681,8 @@ class DbProjectMemory:
 
         Args:
             title (str): The title of the project.
+            deadline (Optional[str]): The deadline of the project in 'DD-MM-YYYY' format. Defaults to None.
+            members (Optional[List[dict]]): List of json/dicts with person id and name of people involved (except self). Defaults to None.
             description (Optional[str]): A description of the project.
             additional_info (Optional[dict]): Additional information about the project.
             status (str): The status of the project. Defaults to 'idea'.
@@ -650,11 +695,20 @@ class DbProjectMemory:
         if last_updated_str and isinstance(last_updated_str, str):
             last_updated = datetime.strptime(last_updated_str, "%Y-%m-%d")
 
+        if additional_info is None:
+            additional_info = {}
+
+        if deadline is not None:
+            additional_info['deadline'] = deadline
+        
+        if members is not None:
+            additional_info['members'] = members
+
         new_project = Project(
             user_id=self.user_id,
             title=title,
             description=description,
-            additional_info=additional_info or {},
+            additional_info=additional_info,
             status=status,
             last_updated=last_updated
         )
@@ -662,7 +716,9 @@ class DbProjectMemory:
         db.session.commit()
         return ProjectSchema().dump(new_project)
     
-    def update_project(self, project_id: int,
+    def update_project(self, project_id: int, 
+                       deadline: Optional[str] = None,
+                       members: Optional[List[dict]] = None,
                        title: Optional[str] = None,
                        description: Optional[str] = None,
                        additional_info: Optional[dict] = None,
@@ -672,6 +728,8 @@ class DbProjectMemory:
 
         Args:
             project_id (int): The ID of the project to update.
+            deadline (Optional[str]): The new deadline of the project in 'DD-MM-YYYY' format.
+            members (Optional[List[dict]]): List of json/dicts with person id and name of people involved (except self). Appends to existing list.
             title (Optional[str]): The new title of the project.
             description (Optional[str]): The new description of the project.
             additional_info (Optional[dict]): Additional information about the project.
@@ -688,8 +746,19 @@ class DbProjectMemory:
             project.title = title
         if description:
             project.description = description
+            
+        new_additional_info = dict(project.additional_info) if project.additional_info else {}
         if additional_info is not None:
-            project.additional_info = additional_info
+            new_additional_info.update(additional_info)
+            
+        if deadline is not None:
+            new_additional_info['deadline'] = deadline
+        if members is not None:
+            existing_members = new_additional_info.get('members', [])
+            new_additional_info['members'] = existing_members + members
+
+        project.additional_info = new_additional_info
+        
         if status:
             project.status = status
         project.last_updated = datetime.utcnow()

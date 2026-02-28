@@ -72,5 +72,5 @@ py app.py
 - [x] Testing Stage 2: Thoroughly test the current functionality
   - [x] Conversation CRUD
   - [x] Authentication and user data
-- [x] Dashboard: Other crud operations
+- [x] Dashboard: Other crud operations (Memories Dashboard, Profile Separation, Global Search Filter)
 - [ ] Multiagent structure for more efficiency

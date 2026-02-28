@@ -123,9 +123,9 @@ def get_system_prompt() -> str:
         - **get_person_by_description**
         - **get_person_by_date**
         - **get_people_in_date_range**
-        - **create_person** – Include behavior, interests, and other relevant details in notes. Add "relationship" to additional_info, where relationship means relationship of a person to the user. User's relationship to themselves will be "self". Use name as "Self" for the user themselves.
+        - **create_person** – Include behavior, interests, and other relevant details in notes. Use relationship, locality, age, and knows arguments to populate their details. User's relationship to themselves will be "self". Use name as "Self" for the user themselves.
         - **delete_person** – Ask for confirmation before deleting.
-        - **update_person** – Ask for confirmation before updating. Use name as "Self" for the user themselves.
+        - **update_person** – Ask for confirmation before updating. Use name as "Self" for the user themselves. You can update relationship, locality, age, and knows (knows will be appended).
         - **get_person_by_id**
         - **get_user_details** – Get the user's own details, including name and additional information.  
             > Note: The same table stores the user's own details - but under the name of "Self"
@@ -142,8 +142,8 @@ def get_system_prompt() -> str:
         - **get_project_by_keyword**
         - **get_project_by_date**
         - **get_projects_in_date_range**
-        - **create_project** – Use when the user starts a new project.
-        - **update_project** – Ask for confirmation before updating.
+        - **create_project** – Use when the user starts a new project. You can specify a deadline and members.
+        - **update_project** – Ask for confirmation before updating. You can update deadline and members (members will be appended).
         - **delete_project** – Ask for confirmation before deleting.
         - **get_project_by_id**
 

@@ -3,6 +3,7 @@ from services.person_service import PersonService
 from controllers.utils import jsonify_ok, jsonify_error
 from utils.auth_middleware import require_signed_in
 from utils.auth_handlers import get_user_data
+from models.person import Person
 
 bp = Blueprint('people', __name__, url_prefix='/people')
 
@@ -24,6 +25,21 @@ def create_person():
     p = PersonService.create(**data)
     return jsonify_ok(p.to_dict())
 
+@bp.route('/self', methods=['GET'])
+@require_signed_in
+def get_self():
+    user_id = get_current_user_id()
+    # Find a Person where name is 'self' or 'me'
+    from sqlalchemy import func
+    p = Person.query.filter(
+        Person.user_id == user_id,
+        func.lower(Person.name).in_(['self', 'me'])
+    ).first()
+    
+    if not p:
+        return jsonify_error('not found', 404)
+    return jsonify_ok(p.to_dict())
+
 @bp.route('/<int:person_id>', methods=['GET'])
 @require_signed_in
 def get_person(person_id):
@@ -37,8 +53,38 @@ def get_person(person_id):
 @require_signed_in
 def list_people():
     user_id = get_current_user_id()
-    items = PersonService.list(user_id=user_id, limit=1000)
-    return jsonify_ok([i.to_dict() for i in items])
+    page = int(request.args.get('page', 1))
+    limit = int(request.args.get('limit', 20))
+    offset = (page - 1) * limit
+    
+    from sqlalchemy import func, or_
+    query = Person.query.filter(
+        Person.user_id == user_id,
+        func.lower(Person.name).notin_(['self', 'me'])
+    )
+    
+    q = request.args.get('q', '').strip()
+    if q:
+        search_term = f"%{q.lower()}%"
+        # We search by name or see if it's anywhere in notes (cast as string might vary by DB, but typically works or we search JSON if notes is JSON)
+        # Using basic cast to string for the array column
+        from sqlalchemy import cast, String
+        query = query.filter(
+            or_(
+                func.lower(Person.name).like(search_term),
+                cast(Person.notes, String).ilike(search_term)
+            )
+        )
+        
+    total = query.count()
+    items = query.order_by(Person.id.desc()).offset(offset).limit(limit).all()
+    
+    return jsonify_ok({
+        "result": [i.to_dict() for i in items],
+        "total": total,
+        "page": page,
+        "limit": limit
+    })
 
 @bp.route('/<int:person_id>', methods=['PUT'])
 @require_signed_in

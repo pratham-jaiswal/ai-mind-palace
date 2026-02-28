@@ -32,11 +32,12 @@ VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key_here
 npm run dev
 ```
 
-## 📝 TODO
+## 📝 Features & Completed TODOs
 
 - [x] Chat Interface
 - [x] Sidebar for conversation list
 - [x] New Chat icon
 - [x] Delete Chat
-- [x] Dashboard CRUD (People, Projects, Decisions)
+- [x] Dashboard CRUD (People, Projects, Decisions, Memories)
+- [x] Dashboard Pagination & Live Global Search Filter
 - [x] Mind Map Graph UI

@@ -3,6 +3,7 @@ from services.decision_service import DecisionService
 from controllers.utils import jsonify_ok, jsonify_error
 from utils.auth_middleware import require_signed_in
 from utils.auth_handlers import get_user_data
+from models.decision import Decision
 
 bp = Blueprint('decisions', __name__, url_prefix='/decisions')
 
@@ -37,8 +38,31 @@ def get_decision(decision_id):
 @require_signed_in
 def list_decisions():
     user_id = get_current_user_id()
-    items = DecisionService.list(user_id=user_id, limit=1000)
-    return jsonify_ok([i.to_dict() for i in items])
+    page = int(request.args.get('page', 1))
+    limit = int(request.args.get('limit', 20))
+    offset = (page - 1) * limit
+    
+    query = Decision.query.filter_by(user_id=user_id)
+    
+    q = request.args.get('q', '').strip()
+    if q:
+        from sqlalchemy import func, or_
+        search_term = f"%{q.lower()}%"
+        query = query.filter(
+            or_(
+                func.lower(Decision.decision_name).like(search_term),
+                func.lower(Decision.decision_text).like(search_term)
+            )
+        )
+    total = query.count()
+    items = query.order_by(Decision.id.desc()).offset(offset).limit(limit).all()
+    
+    return jsonify_ok({
+        "result": [i.to_dict() for i in items],
+        "total": total,
+        "page": page,
+        "limit": limit
+    })
 
 @bp.route('/<int:decision_id>', methods=['PUT'])
 @require_signed_in

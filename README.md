@@ -20,7 +20,7 @@ It combines **chat** with a **structured memory architecture**, and uses the fol
   1. **Vector memory** (FAISS) – store and retrieve knowledge.
   2. **Database memory** – structured tracking of people, decisions, and projects/tasks.
   3. **Visual Mind Map** – interactive graph of your data.
-  4. **Knowledge Dashboard** – CRUD access to structured memory.
+  4. **Knowledge Dashboard** – Full CRUD access to structured DB and semantic Vector memories, complete with **Live Global Search** and **Pagination**.
 
 - 🔑 **Authentication** via Clerk.
 - 📂 **Multiple chat threads** with **shared memory** (beyond per-conversation history).
@@ -47,11 +47,11 @@ Check them out to run locally.
   |:--:|
   | <i>Chat</i>|
 
-  | <img src="https://file.garden/aATRZRm2KRQR_hmq/AI%20Mind%20Palace/28%20feb%202026/Dashboard" width="600"> |
+  | <img src="https://file.garden/aATRZRm2KRQR_hmq/AI%20Mind%20Palace/28%20feb%202026%202/Dashboard" width="600"> |
   |:--:|
   | <i>Dashboard</i>|
 
-  | <img src="https://file.garden/aATRZRm2KRQR_hmq/AI%20Mind%20Palace/28%20feb%202026/MindMap" width="600"> |
+  | <img src="https://file.garden/aATRZRm2KRQR_hmq/AI%20Mind%20Palace/28%20feb%202026%202/Mind%20Map" width="600"> |
   |:--:|
   | <i>Mind Map</i>|
   

@@ -2,8 +2,8 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 
 text_splitter = RecursiveCharacterTextSplitter(
-    chunk_size=10,
-    chunk_overlap=5
+    chunk_size=500,
+    chunk_overlap=100
 )
 
 class ChunkerHandler:

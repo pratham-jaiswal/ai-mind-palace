@@ -51,9 +51,13 @@ export default function MindMap() {
         axios.get(`${BACKEND_URL}/decisions/`, { headers })
       ]);
 
-      const people = resPeople.data.result || [];
-      const projects = resProjects.data.result || [];
-      const decisions = resDecisions.data.result || [];
+      const peoplePayload = resPeople.data.result || {};
+      const projectsPayload = resProjects.data.result || {};
+      const decisionsPayload = resDecisions.data.result || {};
+
+      const people = peoplePayload.result || [];
+      const projects = projectsPayload.result || [];
+      const decisions = decisionsPayload.result || [];
 
       setPeopleData(people);
       setProjectsData(projects);
@@ -305,10 +309,15 @@ export default function MindMap() {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onNodeClick={onNodeClick}
+        proOptions={{ hideAttribution: true }}
         fitView
       >
         <Controls />
-        <MiniMap />
+        <MiniMap
+          style={{ background: 'var(--header-bg, #1a1a1a)', border: '1px solid var(--border-color, #333)', borderRadius: '8px' }}
+          maskColor="rgba(0, 0, 0, 0.5)"
+          nodeColor="var(--text-color, #FFFBDE)"
+        />
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
       </ReactFlow>
 
