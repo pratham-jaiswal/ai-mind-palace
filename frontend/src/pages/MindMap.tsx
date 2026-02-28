@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import ReactFlow, {
   MiniMap,
   Controls,
@@ -19,6 +19,7 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function MindMap() {
   const { getToken } = useAuth();
+  const location = useLocation();
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [loading, setLoading] = useState(true);
@@ -337,8 +338,8 @@ export default function MindMap() {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-        <PuffLoader color="#FFFBDE" size={100} />
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'var(--bg-color)' }}>
+        <PuffLoader key={location.key} color="#FFFBDE" size={100} />
       </div>
     );
   }

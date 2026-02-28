@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import "./ChatWindow.css";
 import ReactMarkdown from "react-markdown";
@@ -21,6 +21,7 @@ type ConversationMetadata = {
 
 const ChatWindow = () => {
   const { getToken } = useAuth();
+  const location = useLocation();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState<string>("");
   const [threadId, setThreadId] = useState<string | null>(null);
@@ -245,6 +246,7 @@ const ChatWindow = () => {
     return (
       <div className="loader">
         <PuffLoader
+          key={location.key}
           color="rgb(250, 240, 230)"
           size={100}
           loading={loadingConversations}

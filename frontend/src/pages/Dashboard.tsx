@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '@clerk/clerk-react';
 import { PuffLoader } from 'react-spinners';
@@ -8,6 +8,7 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function Dashboard() {
   const { getToken } = useAuth();
+  const location = useLocation();
   const [people, setPeople] = useState<any[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
   const [decisions, setDecisions] = useState<any[]>([]);
@@ -298,7 +299,7 @@ export default function Dashboard() {
     );
   };
 
-  const headerStyle = { display: 'flex', justifyContent: 'space-between', alignItems: 'center' };
+  // const headerStyle = { display: 'flex', justifyContent: 'space-between', alignItems: 'center' };
   const addBtnStyle = { background: 'var(--text-color)', color: 'var(--bg-color)', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 'bold' };
   const cardStyle = { background: 'var(--header-bg)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)', position: 'relative' as any, wordBreak: 'break-word' as any, overflowWrap: 'anywhere' as any };
 
@@ -329,7 +330,7 @@ export default function Dashboard() {
   if (loadingPeople && people.length === 0 && loadingProjects && projects.length === 0) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-        <PuffLoader color="#FFFBDE" size={100} />
+        <PuffLoader key={location.key} color="#FFFBDE" size={100} />
       </div>
     );
   }
@@ -357,9 +358,9 @@ export default function Dashboard() {
 
         {/* Your Profile Section */}
         <section style={{ marginBottom: '2rem' }}>
-          <div style={{ ...headerStyle, borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem' }}>
-            <h2>🧑 Your Profile {loadingSelf && <PuffLoader color="#FFFBDE" size={20} cssOverride={{ display: 'inline-block', marginLeft: '10px' }} />}</h2>
-            {!selfPerson && <button style={addBtnStyle} onClick={() => openModal("person", "add", { name: "me" })}>+ Add Profile</button>}
+          <div className="dashboard-section card-grid-section">
+            <h2>🧑 Your Profile {loadingSelf && <PuffLoader key={location.key} color="#FFFBDE" size={20} cssOverride={{ display: 'inline-block', marginLeft: '10px' }} />}</h2>
+            <div className="cards-container"> {!selfPerson && <button style={addBtnStyle} onClick={() => openModal("person", "add", { name: "me" })}>+ Add Profile</button>}</div>
           </div>
           <div style={{ marginTop: '1rem' }}>
             {!selfPerson && !loadingSelf ? (
@@ -389,9 +390,9 @@ export default function Dashboard() {
 
           {/* Memories Section */}
           <section>
-            <div style={headerStyle}>
-              <h2>🧠 Memories {loadingMemories && <PuffLoader color="#FFFBDE" size={20} cssOverride={{ display: 'inline-block', marginLeft: '10px' }} />}</h2>
-              <button style={addBtnStyle} onClick={() => openModal("memory", "add")}>+ Add</button>
+            <div className="section-header">
+              <h2>🧠 Memories {loadingMemories && <PuffLoader key={location.key} color="#FFFBDE" size={20} cssOverride={{ display: 'inline-block', marginLeft: '10px' }} />}</h2>
+              <button className="btn-add" onClick={() => openModal("memory", "add")}>+ Add</button>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
               {memories.length === 0 ? <p>No memories found.</p> : memories.map((m, i) => (
@@ -410,9 +411,9 @@ export default function Dashboard() {
 
           {/* People Section */}
           <section>
-            <div style={headerStyle}>
-              <h2>👥 People {loadingPeople && <PuffLoader color="#FFFBDE" size={20} cssOverride={{ display: 'inline-block', marginLeft: '10px' }} />}</h2>
-              <button style={addBtnStyle} onClick={() => openModal("person", "add")}>+ Add</button>
+            <div className="section-header">
+              <h2>👥 People {loadingPeople && <PuffLoader key={location.key} color="#FFFBDE" size={20} cssOverride={{ display: 'inline-block', marginLeft: '10px' }} />}</h2>
+              <button className="btn-add" onClick={() => openModal("person", "add")}>+ Add</button>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
               {people.length === 0 ? <p>No people found.</p> : people.map((p, i) => {
@@ -456,9 +457,9 @@ export default function Dashboard() {
 
           {/* Projects Section */}
           <section>
-            <div style={headerStyle}>
-              <h2>🚀 Projects {loadingProjects && <PuffLoader color="#FFFBDE" size={20} cssOverride={{ display: 'inline-block', marginLeft: '10px' }} />}</h2>
-              <button style={addBtnStyle} onClick={() => openModal("project", "add")}>+ Add</button>
+            <div className="section-header">
+              <h2>🚀 Projects {loadingProjects && <PuffLoader key={location.key} color="#FFFBDE" size={20} cssOverride={{ display: 'inline-block', marginLeft: '10px' }} />}</h2>
+              <button className="btn-add" onClick={() => openModal("project", "add")}>+ Add</button>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
               {projects.length === 0 ? <p>No projects found.</p> : projects.map((p, i) => (
@@ -479,9 +480,9 @@ export default function Dashboard() {
 
           {/* Decisions Section */}
           <section>
-            <div style={headerStyle}>
-              <h2>🎯 Decisions {loadingDecisions && <PuffLoader color="#FFFBDE" size={20} cssOverride={{ display: 'inline-block', marginLeft: '10px' }} />}</h2>
-              <button style={addBtnStyle} onClick={() => openModal("decision", "add")}>+ Add</button>
+            <div className="section-header">
+              <h2>🎯 Decisions {loadingDecisions && <PuffLoader key={location.key} color="#FFFBDE" size={20} cssOverride={{ display: 'inline-block', marginLeft: '10px' }} />}</h2>
+              <button className="btn-add" onClick={() => openModal("decision", "add")}>+ Add</button>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
               {decisions.length === 0 ? <p>No decisions found.</p> : decisions.map((d, i) => (
