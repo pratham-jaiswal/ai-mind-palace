@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '@clerk/clerk-react';
 import { PuffLoader } from 'react-spinners';
@@ -334,265 +335,280 @@ export default function Dashboard() {
   }
 
   return (
-    <div style={{ padding: '2rem', height: '100%', overflowY: 'auto' }}>
-      {/* <h1>Knowledge Dashboard</h1> */}
-      {/* <p style={{ opacity: 0.7, marginBottom: '2rem' }}>Your Second Brain's structured entities.</p> */}
+    <div style={{ padding: '2rem', height: '100%', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ flex: 1 }}>
+        {/* <h1>Knowledge Dashboard</h1> */}
+        {/* <p style={{ opacity: 0.7, marginBottom: '2rem' }}>Your Second Brain's structured entities.</p> */}
 
-      <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'center' }}>
-        <div style={{ position: 'relative', width: '100%', maxWidth: '600px' }}>
-          <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }}>🔍</span>
-          <input
-            type="text"
-            placeholder="Search Knowledge Base..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{ width: '100%', padding: '12px 20px 12px 45px', fontSize: '1rem', borderRadius: '24px', border: '1px solid var(--border-color)', background: 'rgba(0,0,0,0.1)', color: 'var(--text-color)', outline: 'none', transition: 'box-shadow 0.2s', boxSizing: 'border-box' }}
-            onFocus={(e) => e.target.style.boxShadow = '0 0 0 2px var(--border-color)'}
-            onBlur={(e) => e.target.style.boxShadow = 'none'}
-          />
-        </div>
-      </div>
-
-      {/* Your Profile Section */}
-      <section style={{ marginBottom: '2rem' }}>
-        <div style={{ ...headerStyle, borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem' }}>
-          <h2>🧑 Your Profile {loadingSelf && <PuffLoader color="#FFFBDE" size={20} cssOverride={{ display: 'inline-block', marginLeft: '10px' }} />}</h2>
-          {!selfPerson && <button style={addBtnStyle} onClick={() => openModal("person", "add", { name: "me" })}>+ Add Profile</button>}
-        </div>
-        <div style={{ marginTop: '1rem' }}>
-          {!selfPerson && !loadingSelf ? (
-            <p style={{ opacity: 0.6 }}>You haven't set up your profile yet.</p>
-          ) : selfPerson ? (
-            <div style={{ ...cardStyle, maxWidth: '600px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div style={{ flex: 1, minWidth: 0, paddingRight: '1rem' }}>
-                <h3 style={{ margin: '0 0 0.5rem 0' }}>{selfPerson.name} {selfPerson.additional_info?.age ? `(${selfPerson.additional_info.age})` : ''}</h3>
-                {(selfPerson.notes && selfPerson.notes.length > 0) && (
-                  <ul style={{ margin: 0, paddingLeft: '1.2rem', opacity: 0.8, fontSize: '0.9rem', paddingBottom: '0.5rem' }}>
-                    {selfPerson.notes.map((n: string, idx: number) => <li key={idx}>{n}</li>)}
-                  </ul>
-                )}
-                {renderAdditionalInfo(
-                  Object.fromEntries(
-                    Object.entries(selfPerson.additional_info || {}).filter(([k]) => k !== 'age')
-                  )
-                )}
-              </div>
-              <button style={{ background: 'transparent', border: 'none', color: 'var(--text-color)', cursor: 'pointer', opacity: 0.6 }} onClick={() => openModal("person", "edit", selfPerson)}>✏️</button>
-            </div>
-          ) : null}
-        </div>
-      </section>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
-
-        {/* Memories Section */}
-        <section>
-          <div style={headerStyle}>
-            <h2>🧠 Memories {loadingMemories && <PuffLoader color="#FFFBDE" size={20} cssOverride={{ display: 'inline-block', marginLeft: '10px' }} />}</h2>
-            <button style={addBtnStyle} onClick={() => openModal("memory", "add")}>+ Add</button>
+        <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'center' }}>
+          <div style={{ position: 'relative', width: '100%', maxWidth: '600px' }}>
+            <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }}>🔍</span>
+            <input
+              type="text"
+              placeholder="Search Knowledge Base..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{ width: '100%', padding: '12px 20px 12px 45px', fontSize: '1rem', borderRadius: '24px', border: '1px solid var(--border-color)', background: 'rgba(0,0,0,0.1)', color: 'var(--text-color)', outline: 'none', transition: 'box-shadow 0.2s', boxSizing: 'border-box' }}
+              onFocus={(e) => e.target.style.boxShadow = '0 0 0 2px var(--border-color)'}
+              onBlur={(e) => e.target.style.boxShadow = 'none'}
+            />
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
-            {memories.length === 0 ? <p>No memories found.</p> : memories.map((m, i) => (
-              <div key={i} style={cardStyle}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <p style={{ margin: '0 0 0.5rem 0', opacity: 0.9, fontSize: '0.9rem', whiteSpace: 'pre-wrap', flex: 1 }}>
-                    {m.content}
-                  </p>
-                  <button style={{ background: 'transparent', border: 'none', color: 'var(--text-color)', cursor: 'pointer', opacity: 0.6, marginLeft: '10px' }} onClick={() => openModal("memory", "edit", { id: m.metadata.id, content: m.content })}>✏️</button>
+        </div>
+
+        {/* Your Profile Section */}
+        <section style={{ marginBottom: '2rem' }}>
+          <div style={{ ...headerStyle, borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem' }}>
+            <h2>🧑 Your Profile {loadingSelf && <PuffLoader color="#FFFBDE" size={20} cssOverride={{ display: 'inline-block', marginLeft: '10px' }} />}</h2>
+            {!selfPerson && <button style={addBtnStyle} onClick={() => openModal("person", "add", { name: "me" })}>+ Add Profile</button>}
+          </div>
+          <div style={{ marginTop: '1rem' }}>
+            {!selfPerson && !loadingSelf ? (
+              <p style={{ opacity: 0.6 }}>You haven't set up your profile yet.</p>
+            ) : selfPerson ? (
+              <div style={{ ...cardStyle, maxWidth: '600px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div style={{ flex: 1, minWidth: 0, paddingRight: '1rem' }}>
+                  <h3 style={{ margin: '0 0 0.5rem 0' }}>{selfPerson.name} {selfPerson.additional_info?.age ? `(${selfPerson.additional_info.age})` : ''}</h3>
+                  {(selfPerson.notes && selfPerson.notes.length > 0) && (
+                    <ul style={{ margin: 0, paddingLeft: '1.2rem', opacity: 0.8, fontSize: '0.9rem', paddingBottom: '0.5rem' }}>
+                      {selfPerson.notes.map((n: string, idx: number) => <li key={idx}>{n}</li>)}
+                    </ul>
+                  )}
+                  {renderAdditionalInfo(
+                    Object.fromEntries(
+                      Object.entries(selfPerson.additional_info || {}).filter(([k]) => k !== 'age')
+                    )
+                  )}
                 </div>
+                <button style={{ background: 'transparent', border: 'none', color: 'var(--text-color)', cursor: 'pointer', opacity: 0.6 }} onClick={() => openModal("person", "edit", selfPerson)}>✏️</button>
               </div>
-            ))}
+            ) : null}
           </div>
-          {renderPagination(memoriesPage, memoriesTotal, setMemoriesPage)}
         </section>
 
-        {/* People Section */}
-        <section>
-          <div style={headerStyle}>
-            <h2>👥 People {loadingPeople && <PuffLoader color="#FFFBDE" size={20} cssOverride={{ display: 'inline-block', marginLeft: '10px' }} />}</h2>
-            <button style={addBtnStyle} onClick={() => openModal("person", "add")}>+ Add</button>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
-            {people.length === 0 ? <p>No people found.</p> : people.map((p, i) => {
-              const info = p.additional_info || {};
-              const age = info.age || "N/A";
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
 
-              // Only render generic bullet points for keys OTHER than age
-              const filteredInfo = { ...info };
-              delete filteredInfo.age;
+          {/* Memories Section */}
+          <section>
+            <div style={headerStyle}>
+              <h2>🧠 Memories {loadingMemories && <PuffLoader color="#FFFBDE" size={20} cssOverride={{ display: 'inline-block', marginLeft: '10px' }} />}</h2>
+              <button style={addBtnStyle} onClick={() => openModal("memory", "add")}>+ Add</button>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+              {memories.length === 0 ? <p>No memories found.</p> : memories.map((m, i) => (
+                <div key={i} style={cardStyle}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <p style={{ margin: '0 0 0.5rem 0', opacity: 0.9, fontSize: '0.9rem', whiteSpace: 'pre-wrap', flex: 1 }}>
+                      {m.content}
+                    </p>
+                    <button style={{ background: 'transparent', border: 'none', color: 'var(--text-color)', cursor: 'pointer', opacity: 0.6, marginLeft: '10px' }} onClick={() => openModal("memory", "edit", { id: m.metadata.id, content: m.content })}>✏️</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {renderPagination(memoriesPage, memoriesTotal, setMemoriesPage)}
+          </section>
 
-              return (
+          {/* People Section */}
+          <section>
+            <div style={headerStyle}>
+              <h2>👥 People {loadingPeople && <PuffLoader color="#FFFBDE" size={20} cssOverride={{ display: 'inline-block', marginLeft: '10px' }} />}</h2>
+              <button style={addBtnStyle} onClick={() => openModal("person", "add")}>+ Add</button>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+              {people.length === 0 ? <p>No people found.</p> : people.map((p, i) => {
+                const info = p.additional_info || {};
+                const age = info.age || "N/A";
+
+                // Only render generic bullet points for keys OTHER than age
+                const filteredInfo = { ...info };
+                delete filteredInfo.age;
+
+                return (
+                  <div key={i} style={cardStyle}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <strong style={{ fontSize: '1.2rem' }}>{p.name}</strong>
+                      <button style={{ background: 'transparent', border: 'none', color: 'var(--text-color)', cursor: 'pointer', opacity: 0.6 }} onClick={() => openModal("person", "edit", p)}>✏️</button>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem', opacity: 0.8, fontSize: '0.85rem' }}>
+                      <span>🎂 {age} yrs</span>
+                    </div>
+
+                    <div style={{ margin: '0.8rem 0 0 0', opacity: 0.9, fontSize: '0.9rem' }}>
+                      {p.notes && p.notes.length > 0 ? (
+                        <ul style={{ margin: 0, paddingLeft: '1.2rem' }}>
+                          {p.notes.map((note: string, idx: number) => (
+                            <li key={idx} style={{ marginBottom: '4px' }}>{note}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p style={{ margin: 0, fontStyle: 'italic', opacity: 0.7 }}>No notes available.</p>
+                      )}
+                    </div>
+                    {renderAdditionalInfo(filteredInfo)}
+                    <small style={{ display: 'block', marginTop: '0.8rem', opacity: 0.5 }}>Last: {new Date(p.last_mentioned).toLocaleDateString()}</small>
+                  </div>
+                );
+              })}
+            </div>
+            {renderPagination(peoplePage, peopleTotal, setPeoplePage)}
+          </section>
+
+          {/* Projects Section */}
+          <section>
+            <div style={headerStyle}>
+              <h2>🚀 Projects {loadingProjects && <PuffLoader color="#FFFBDE" size={20} cssOverride={{ display: 'inline-block', marginLeft: '10px' }} />}</h2>
+              <button style={addBtnStyle} onClick={() => openModal("project", "add")}>+ Add</button>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+              {projects.length === 0 ? <p>No projects found.</p> : projects.map((p, i) => (
                 <div key={i} style={cardStyle}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <strong style={{ fontSize: '1.2rem' }}>{p.name}</strong>
-                    <button style={{ background: 'transparent', border: 'none', color: 'var(--text-color)', cursor: 'pointer', opacity: 0.6 }} onClick={() => openModal("person", "edit", p)}>✏️</button>
+                    <strong>{p.title}</strong>
+                    <button style={{ background: 'transparent', border: 'none', color: 'var(--text-color)', cursor: 'pointer', opacity: 0.6 }} onClick={() => openModal("project", "edit", p)}>✏️</button>
                   </div>
-
-                  <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem', opacity: 0.8, fontSize: '0.85rem' }}>
-                    <span>🎂 {age} yrs</span>
-                  </div>
-
-                  <div style={{ margin: '0.8rem 0 0 0', opacity: 0.9, fontSize: '0.9rem' }}>
-                    {p.notes && p.notes.length > 0 ? (
-                      <ul style={{ margin: 0, paddingLeft: '1.2rem' }}>
-                        {p.notes.map((note: string, idx: number) => (
-                          <li key={idx} style={{ marginBottom: '4px' }}>{note}</li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p style={{ margin: 0, fontStyle: 'italic', opacity: 0.7 }}>No notes available.</p>
-                    )}
-                  </div>
-                  {renderAdditionalInfo(filteredInfo)}
-                  <small style={{ display: 'block', marginTop: '0.8rem', opacity: 0.5 }}>Last: {new Date(p.last_mentioned).toLocaleDateString()}</small>
+                  <span style={{ display: 'inline-block', marginTop: '5px', fontSize: '0.75rem', background: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: '4px' }}>{p.status}</span>
+                  <p style={{ margin: '0.5rem 0 0 0', opacity: 0.8, fontSize: '0.9rem' }}>{p.description}</p>
+                  {renderAdditionalInfo(p.additional_info)}
+                  <small style={{ display: 'block', marginTop: '0.5rem', opacity: 0.5 }}>Last: {new Date(p.last_updated).toLocaleDateString()}</small>
                 </div>
-              );
-            })}
-          </div>
-          {renderPagination(peoplePage, peopleTotal, setPeoplePage)}
-        </section>
+              ))}
+            </div>
+            {renderPagination(projectsPage, projectsTotal, setProjectsPage)}
+          </section>
 
-        {/* Projects Section */}
-        <section>
-          <div style={headerStyle}>
-            <h2>🚀 Projects {loadingProjects && <PuffLoader color="#FFFBDE" size={20} cssOverride={{ display: 'inline-block', marginLeft: '10px' }} />}</h2>
-            <button style={addBtnStyle} onClick={() => openModal("project", "add")}>+ Add</button>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
-            {projects.length === 0 ? <p>No projects found.</p> : projects.map((p, i) => (
-              <div key={i} style={cardStyle}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <strong>{p.title}</strong>
-                  <button style={{ background: 'transparent', border: 'none', color: 'var(--text-color)', cursor: 'pointer', opacity: 0.6 }} onClick={() => openModal("project", "edit", p)}>✏️</button>
+          {/* Decisions Section */}
+          <section>
+            <div style={headerStyle}>
+              <h2>🎯 Decisions {loadingDecisions && <PuffLoader color="#FFFBDE" size={20} cssOverride={{ display: 'inline-block', marginLeft: '10px' }} />}</h2>
+              <button style={addBtnStyle} onClick={() => openModal("decision", "add")}>+ Add</button>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+              {decisions.length === 0 ? <p>No decisions found.</p> : decisions.map((d, i) => (
+                <div key={i} style={cardStyle}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <strong>{d.decision_name || "Decision"}</strong>
+                    <button style={{ background: 'transparent', border: 'none', color: 'var(--text-color)', cursor: 'pointer', opacity: 0.6 }} onClick={() => openModal("decision", "edit", d)}>✏️</button>
+                  </div>
+                  <p style={{ margin: '0.5rem 0 0 0', opacity: 0.8, fontSize: '0.9rem' }}>{d.decision_text}</p>
+                  {renderAdditionalInfo(d.additional_info)}
+                  <small style={{ display: 'block', marginTop: '0.5rem', opacity: 0.5 }}>Date: {new Date(d.date).toLocaleDateString()}</small>
                 </div>
-                <span style={{ display: 'inline-block', marginTop: '5px', fontSize: '0.75rem', background: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: '4px' }}>{p.status}</span>
-                <p style={{ margin: '0.5rem 0 0 0', opacity: 0.8, fontSize: '0.9rem' }}>{p.description}</p>
-                {renderAdditionalInfo(p.additional_info)}
-                <small style={{ display: 'block', marginTop: '0.5rem', opacity: 0.5 }}>Last: {new Date(p.last_updated).toLocaleDateString()}</small>
+              ))}
+            </div>
+            {renderPagination(decisionsPage, decisionsTotal, setDecisionsPage)}
+          </section>
+
+        </div>
+
+        {/* Generic Modal */}
+        {modalType && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+            <div style={{ background: 'var(--modal-bg, #2a2a2a)', padding: '2rem', borderRadius: '12px', width: '450px', maxWidth: '90%', maxHeight: '90vh', overflowY: 'auto' }}>
+              <h3 style={{ marginTop: 0 }}>{modalMode === "add" ? "Add New" : "Edit"} {modalType === "person" ? "Person" : modalType === "project" ? "Project" : modalType === "memory" ? "Memory" : "Decision"}</h3>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+
+                {modalType === "memory" && (
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '4px', opacity: 0.8 }}>Memory Content *</label>
+                    <textarea style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--header-bg)', color: 'var(--text-color)', minHeight: '120px', resize: 'vertical' }} value={formData.content || ''} onChange={e => setFormData({ ...formData, content: e.target.value })} />
+                  </div>
+                )}
+
+                {modalType === "person" && (
+                  <>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '4px', opacity: 0.8 }}>Name *</label>
+                      <input style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--header-bg)', color: 'var(--text-color)' }} value={formData.name || ''} onChange={e => setFormData({ ...formData, name: e.target.value })} />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '4px', opacity: 0.8 }}>Age</label>
+                      <input type="number" style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--header-bg)', color: 'var(--text-color)' }} value={formData.age || ''} onChange={e => setFormData({ ...formData, age: e.target.value })} />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '4px', opacity: 0.8 }}>Notes (One per line)</label>
+                      <textarea style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--header-bg)', color: 'var(--text-color)', minHeight: '80px', resize: 'vertical' }} value={formData.notes || ''} onChange={e => setFormData({ ...formData, notes: e.target.value })} />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '4px', opacity: 0.8 }}>Additional Info (JSON)</label>
+                      <textarea style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--header-bg)', color: 'var(--text-color)', minHeight: '60px', resize: 'vertical', fontFamily: 'monospace' }} value={formData.additional_info || ''} onChange={e => setFormData({ ...formData, additional_info: e.target.value })} placeholder='{"hobby": "painting", "role": "manager"}' />
+                    </div>
+                  </>
+                )}
+
+                {modalType === "project" && (
+                  <>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '4px', opacity: 0.8 }}>Title *</label>
+                      <input style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--header-bg)', color: 'var(--text-color)' }} value={formData.title || ''} onChange={e => setFormData({ ...formData, title: e.target.value })} />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '4px', opacity: 0.8 }}>Status</label>
+                      <input style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--header-bg)', color: 'var(--text-color)' }} value={formData.status || ''} onChange={e => setFormData({ ...formData, status: e.target.value })} />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '4px', opacity: 0.8 }}>Description</label>
+                      <textarea style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--header-bg)', color: 'var(--text-color)', minHeight: '80px', resize: 'vertical' }} value={formData.description || ''} onChange={e => setFormData({ ...formData, description: e.target.value })} />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '4px', opacity: 0.8 }}>Additional Info (JSON)</label>
+                      <textarea style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--header-bg)', color: 'var(--text-color)', minHeight: '60px', resize: 'vertical', fontFamily: 'monospace' }} value={formData.additional_info || ''} onChange={e => setFormData({ ...formData, additional_info: e.target.value })} placeholder='{"deadline": "2026", "priority": "high"}' />
+                    </div>
+                  </>
+                )}
+
+                {modalType === "decision" && (
+                  <>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '4px', opacity: 0.8 }}>Decision Title</label>
+                      <input style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--header-bg)', color: 'var(--text-color)' }} value={formData.decision_name || ''} onChange={e => setFormData({ ...formData, decision_name: e.target.value })} />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '4px', opacity: 0.8 }}>Decision Text *</label>
+                      <textarea style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--header-bg)', color: 'var(--text-color)', minHeight: '80px', resize: 'vertical' }} value={formData.decision_text || ''} onChange={e => setFormData({ ...formData, decision_text: e.target.value })} />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '4px', opacity: 0.8 }}>Additional Info (JSON)</label>
+                      <textarea style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--header-bg)', color: 'var(--text-color)', minHeight: '60px', resize: 'vertical', fontFamily: 'monospace' }} value={formData.additional_info || ''} onChange={e => setFormData({ ...formData, additional_info: e.target.value })} placeholder='{"alternatives": "Option B", "confidence": "high"}' />
+                    </div>
+                  </>
+                )}
+
               </div>
-            ))}
-          </div>
-          {renderPagination(projectsPage, projectsTotal, setProjectsPage)}
-        </section>
 
-        {/* Decisions Section */}
-        <section>
-          <div style={headerStyle}>
-            <h2>🎯 Decisions {loadingDecisions && <PuffLoader color="#FFFBDE" size={20} cssOverride={{ display: 'inline-block', marginLeft: '10px' }} />}</h2>
-            <button style={addBtnStyle} onClick={() => openModal("decision", "add")}>+ Add</button>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
-            {decisions.length === 0 ? <p>No decisions found.</p> : decisions.map((d, i) => (
-              <div key={i} style={cardStyle}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <strong>{d.decision_name || "Decision"}</strong>
-                  <button style={{ background: 'transparent', border: 'none', color: 'var(--text-color)', cursor: 'pointer', opacity: 0.6 }} onClick={() => openModal("decision", "edit", d)}>✏️</button>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem' }}>
+                <div>
+                  {modalMode === "edit" && (
+                    <button style={{ padding: '6px 12px', background: 'rgba(255, 59, 48, 0.2)', border: '1px solid rgba(255, 59, 48, 0.5)', color: '#ff3b30', borderRadius: '6px', cursor: 'pointer' }} onClick={handleDelete} disabled={saving || deleting}>
+                      {deleting ? "Deleting..." : "Delete"}
+                    </button>
+                  )}
                 </div>
-                <p style={{ margin: '0.5rem 0 0 0', opacity: 0.8, fontSize: '0.9rem' }}>{d.decision_text}</p>
-                {renderAdditionalInfo(d.additional_info)}
-                <small style={{ display: 'block', marginTop: '0.5rem', opacity: 0.5 }}>Date: {new Date(d.date).toLocaleDateString()}</small>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button style={{ padding: '6px 12px', background: 'transparent', border: '1px solid var(--border-color)', color: 'white', borderRadius: '6px', cursor: 'pointer' }} onClick={closeModal} disabled={saving || deleting}>Cancel</button>
+                  <button style={{ padding: '6px 16px', background: '#FFFBDE', border: 'none', color: '#1a1a1a', fontWeight: 'bold', borderRadius: '6px', cursor: 'pointer' }} onClick={handleSave} disabled={saving || deleting}>
+                    {saving ? "Saving..." : "Save"}
+                  </button>
+                </div>
               </div>
-            ))}
+            </div>
           </div>
-          {renderPagination(decisionsPage, decisionsTotal, setDecisionsPage)}
-        </section>
-
+        )}
       </div>
 
-      {/* Generic Modal */}
-      {modalType && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ background: 'var(--modal-bg, #2a2a2a)', padding: '2rem', borderRadius: '12px', width: '450px', maxWidth: '90%', maxHeight: '90vh', overflowY: 'auto' }}>
-            <h3 style={{ marginTop: 0 }}>{modalMode === "add" ? "Add New" : "Edit"} {modalType === "person" ? "Person" : modalType === "project" ? "Project" : modalType === "memory" ? "Memory" : "Decision"}</h3>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
-
-              {modalType === "memory" && (
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '4px', opacity: 0.8 }}>Memory Content *</label>
-                  <textarea style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--header-bg)', color: 'var(--text-color)', minHeight: '120px', resize: 'vertical' }} value={formData.content || ''} onChange={e => setFormData({ ...formData, content: e.target.value })} />
-                </div>
-              )}
-
-              {modalType === "person" && (
-                <>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '4px', opacity: 0.8 }}>Name *</label>
-                    <input style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--header-bg)', color: 'var(--text-color)' }} value={formData.name || ''} onChange={e => setFormData({ ...formData, name: e.target.value })} />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '4px', opacity: 0.8 }}>Age</label>
-                    <input type="number" style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--header-bg)', color: 'var(--text-color)' }} value={formData.age || ''} onChange={e => setFormData({ ...formData, age: e.target.value })} />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '4px', opacity: 0.8 }}>Notes (One per line)</label>
-                    <textarea style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--header-bg)', color: 'var(--text-color)', minHeight: '80px', resize: 'vertical' }} value={formData.notes || ''} onChange={e => setFormData({ ...formData, notes: e.target.value })} />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '4px', opacity: 0.8 }}>Additional Info (JSON)</label>
-                    <textarea style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--header-bg)', color: 'var(--text-color)', minHeight: '60px', resize: 'vertical', fontFamily: 'monospace' }} value={formData.additional_info || ''} onChange={e => setFormData({ ...formData, additional_info: e.target.value })} placeholder='{"hobby": "painting", "role": "manager"}' />
-                  </div>
-                </>
-              )}
-
-              {modalType === "project" && (
-                <>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '4px', opacity: 0.8 }}>Title *</label>
-                    <input style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--header-bg)', color: 'var(--text-color)' }} value={formData.title || ''} onChange={e => setFormData({ ...formData, title: e.target.value })} />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '4px', opacity: 0.8 }}>Status</label>
-                    <input style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--header-bg)', color: 'var(--text-color)' }} value={formData.status || ''} onChange={e => setFormData({ ...formData, status: e.target.value })} />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '4px', opacity: 0.8 }}>Description</label>
-                    <textarea style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--header-bg)', color: 'var(--text-color)', minHeight: '80px', resize: 'vertical' }} value={formData.description || ''} onChange={e => setFormData({ ...formData, description: e.target.value })} />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '4px', opacity: 0.8 }}>Additional Info (JSON)</label>
-                    <textarea style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--header-bg)', color: 'var(--text-color)', minHeight: '60px', resize: 'vertical', fontFamily: 'monospace' }} value={formData.additional_info || ''} onChange={e => setFormData({ ...formData, additional_info: e.target.value })} placeholder='{"deadline": "2026", "priority": "high"}' />
-                  </div>
-                </>
-              )}
-
-              {modalType === "decision" && (
-                <>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '4px', opacity: 0.8 }}>Decision Title</label>
-                    <input style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--header-bg)', color: 'var(--text-color)' }} value={formData.decision_name || ''} onChange={e => setFormData({ ...formData, decision_name: e.target.value })} />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '4px', opacity: 0.8 }}>Decision Text *</label>
-                    <textarea style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--header-bg)', color: 'var(--text-color)', minHeight: '80px', resize: 'vertical' }} value={formData.decision_text || ''} onChange={e => setFormData({ ...formData, decision_text: e.target.value })} />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '4px', opacity: 0.8 }}>Additional Info (JSON)</label>
-                    <textarea style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--header-bg)', color: 'var(--text-color)', minHeight: '60px', resize: 'vertical', fontFamily: 'monospace' }} value={formData.additional_info || ''} onChange={e => setFormData({ ...formData, additional_info: e.target.value })} placeholder='{"alternatives": "Option B", "confidence": "high"}' />
-                  </div>
-                </>
-              )}
-
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem' }}>
-              <div>
-                {modalMode === "edit" && (
-                  <button style={{ padding: '6px 12px', background: 'rgba(255, 59, 48, 0.2)', border: '1px solid rgba(255, 59, 48, 0.5)', color: '#ff3b30', borderRadius: '6px', cursor: 'pointer' }} onClick={handleDelete} disabled={saving || deleting}>
-                    {deleting ? "Deleting..." : "Delete"}
-                  </button>
-                )}
-              </div>
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <button style={{ padding: '6px 12px', background: 'transparent', border: '1px solid var(--border-color)', color: 'white', borderRadius: '6px', cursor: 'pointer' }} onClick={closeModal} disabled={saving || deleting}>Cancel</button>
-                <button style={{ padding: '6px 16px', background: '#FFFBDE', border: 'none', color: '#1a1a1a', fontWeight: 'bold', borderRadius: '6px', cursor: 'pointer' }} onClick={handleSave} disabled={saving || deleting}>
-                  {saving ? "Saving..." : "Save"}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Global Dashboard Footer */}
+      <footer style={{ marginTop: '3rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border-color)', textAlign: 'center', fontSize: '0.85rem', color: 'var(--subtext-color)', paddingBottom: '1rem' }}>
+        <span>AI can make mistakes. Consider verifying important information.</span>
+        <span style={{ margin: '0 8px', opacity: 0.4 }}>|</span>
+        <span>&copy; {new Date().getFullYear()} Pratham Jaiswal</span>
+        <span style={{ margin: '0 8px', opacity: 0.4 }}>|</span>
+        <a href="https://github.com/pratham-jaiswal/ai-mind-palace" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--subtext-color)', textDecoration: 'none', opacity: 0.8 }}>GitHub</a>
+        <span style={{ margin: '0 8px', opacity: 0.4 }}>|</span>
+        <Link to="/terms" style={{ color: 'var(--subtext-color)', textDecoration: 'none', opacity: 0.8 }}>Terms</Link>
+        <span style={{ margin: '0 8px', opacity: 0.4 }}>|</span>
+        <Link to="/privacy" style={{ color: 'var(--subtext-color)', textDecoration: 'none', opacity: 0.8 }}>Privacy</Link>
+      </footer>
 
     </div>
   );

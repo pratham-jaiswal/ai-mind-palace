@@ -39,21 +39,33 @@ Check them out to run locally.
 <details>
   <summary>Click to expand/collapse</summary>
 
-  | <img src="https://file.garden/aATRZRm2KRQR_hmq/AI%20Mind%20Palace/28%20feb%202026/Home%20(not%20logged%20in)" width="600"> |
+  | <img src="https://file.garden/aATRZRm2KRQR_hmq/AI%20Mind%20Palace/28%20feb%202026%204/Home%20(Logged%20Out)" width="600"> |
   |:--:|
-  | <i>Home</i>|
+  | <i>Landing Page</i>|
 
-  | <img src="https://file.garden/aATRZRm2KRQR_hmq/AI%20Mind%20Palace/28%20feb%202026/Chat" width="600"> |
+  | <img src="https://file.garden/aATRZRm2KRQR_hmq/AI%20Mind%20Palace/28%20feb%202026%204/New%20Chat" width="600"> |
+  |:--:|
+  | <i>New Chat</i>|
+
+  | <img src="https://file.garden/aATRZRm2KRQR_hmq/AI%20Mind%20Palace/28%20feb%202026%204/Chat" width="600"> |
   |:--:|
   | <i>Chat</i>|
 
-  | <img src="https://file.garden/aATRZRm2KRQR_hmq/AI%20Mind%20Palace/28%20feb%202026%202/Dashboard" width="600"> |
+  | <img src="https://file.garden/aATRZRm2KRQR_hmq/AI%20Mind%20Palace/28%20feb%202026%204/Dashboard" width="600"> |
   |:--:|
   | <i>Dashboard</i>|
 
-  | <img src="https://file.garden/aATRZRm2KRQR_hmq/AI%20Mind%20Palace/28%20feb%202026%203/Mind%20Map" width="600"> |
+  | <img src="https://file.garden/aATRZRm2KRQR_hmq/AI%20Mind%20Palace/28%20feb%202026%204/Mind%20Map" width="600"> |
   |:--:|
   | <i>Mind Map</i>|
+
+  <!-- | <img src="https://file.garden/aATRZRm2KRQR_hmq/AI%20Mind%20Palace/28%20feb%202026%204/Privacy%20Policy" width="600"> |
+  |:--:|
+  | <i>Privacy Policy</i>|
+
+  | <img src="https://file.garden/aATRZRm2KRQR_hmq/AI%20Mind%20Palace/28%20feb%202026%204/Mind%20Map" width="600"> |
+  |:--:|
+  | <i>Terms and Conditions</i>| -->
   
 </details>
 

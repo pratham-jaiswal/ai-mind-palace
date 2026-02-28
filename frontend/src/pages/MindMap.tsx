@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import ReactFlow, {
   MiniMap,
   Controls,
@@ -450,6 +451,19 @@ export default function MindMap() {
           </div>
         </div>
       )}
+
+      {/* Global Dashboard Footer */}
+      <footer style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: 'var(--header-bg)', paddingTop: '0.8rem', borderTop: '1px solid var(--border-color)', textAlign: 'center', fontSize: '0.85rem', color: 'var(--subtext-color)', paddingBottom: '0.8rem', zIndex: 100 }}>
+        <span>AI can make mistakes. Consider verifying important information.</span>
+        <span style={{ margin: '0 8px', opacity: 0.4 }}>|</span>
+        <span>&copy; {new Date().getFullYear()} Pratham Jaiswal</span>
+        <span style={{ margin: '0 8px', opacity: 0.4 }}>|</span>
+        <a href="https://github.com/pratham-jaiswal/ai-mind-palace" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--subtext-color)', textDecoration: 'none', opacity: 0.8 }}>GitHub</a>
+        <span style={{ margin: '0 8px', opacity: 0.4 }}>|</span>
+        <Link to="/terms" style={{ color: 'var(--subtext-color)', textDecoration: 'none', opacity: 0.8 }}>Terms</Link>
+        <span style={{ margin: '0 8px', opacity: 0.4 }}>|</span>
+        <Link to="/privacy" style={{ color: 'var(--subtext-color)', textDecoration: 'none', opacity: 0.8 }}>Privacy</Link>
+      </footer>
     </div>
   );
 }

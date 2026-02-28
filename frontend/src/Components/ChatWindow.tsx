@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import "./ChatWindow.css";
 import ReactMarkdown from "react-markdown";
@@ -355,6 +356,17 @@ const ChatWindow = () => {
                 </svg>
               </button>
             </div>
+            <p className="disclaimer">
+              <span>AI can make mistakes. Consider verifying important information.</span>
+              <span className="footer-divider">|</span>
+              <span>&copy; {new Date().getFullYear()} Pratham Jaiswal</span>
+              <span className="footer-divider">|</span>
+              <a href="https://github.com/pratham-jaiswal/ai-mind-palace" target="_blank" rel="noopener noreferrer" className="footer-link">GitHub</a>
+              <span className="footer-divider">|</span>
+              <Link to="/terms" className="footer-link">Terms</Link>
+              <span className="footer-divider">|</span>
+              <Link to="/privacy" className="footer-link">Privacy</Link>
+            </p>
           </div>
         ) : (
           <>
@@ -390,7 +402,15 @@ const ChatWindow = () => {
               </button>
             </div>
             <p className="disclaimer">
-              Powered by OpenAI. AI can make mistakes.
+              <span>AI can make mistakes. Consider verifying important information.</span>
+              <span className="footer-divider">|</span>
+              <span>&copy; {new Date().getFullYear()} Pratham Jaiswal</span>
+              <span className="footer-divider">|</span>
+              <a href="https://github.com/pratham-jaiswal/ai-mind-palace" target="_blank" rel="noopener noreferrer" className="footer-link">GitHub</a>
+              <span className="footer-divider">|</span>
+              <Link to="/terms" className="footer-link">Terms</Link>
+              <span className="footer-divider">|</span>
+              <Link to="/privacy" className="footer-link">Privacy</Link>
             </p>
           </>
         )}
