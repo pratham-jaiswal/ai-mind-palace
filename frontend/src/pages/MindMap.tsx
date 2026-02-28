@@ -149,6 +149,48 @@ export default function MindMap() {
       const decisionRadius = 350 + (decisions.length * 20);
       addNodesInArc(decisions, 'decision', decisionRadius, Math.PI * 0.35, Math.PI * 0.65);
 
+      const existingNodeIds = new Set(newNodes.map(n => n.id));
+
+      // Connect People relationships
+      people.forEach((p: any) => {
+        const knows = p.additional_info?.knows || [];
+        if (Array.isArray(knows)) {
+          knows.forEach(k => {
+            const targetName = (k.name || "").toLowerCase();
+            const targetId = `person-${k.id}`;
+            if (targetName !== 'self' && targetName !== 'me' && existingNodeIds.has(targetId)) {
+              newEdges.push({
+                id: `e-person-${p.id}-${targetId}`,
+                source: `person-${p.id}`,
+                target: targetId,
+                animated: false,
+                style: { stroke: '#90CAF9', strokeWidth: 1.5, opacity: 0.5 }
+              });
+            }
+          });
+        }
+      });
+
+      // Connect Project members
+      projects.forEach((proj: any) => {
+        const members = proj.additional_info?.members || [];
+        if (Array.isArray(members)) {
+          members.forEach(m => {
+            const targetName = (m.name || "").toLowerCase();
+            const targetId = `person-${m.id}`;
+            if (targetName !== 'self' && targetName !== 'me' && existingNodeIds.has(targetId)) {
+              newEdges.push({
+                id: `e-project-${proj.id}-${targetId}`,
+                source: `project-${proj.id}`,
+                target: targetId,
+                animated: false,
+                style: { stroke: '#CE93D8', strokeDasharray: '5,5', strokeWidth: 1.5, opacity: 0.5 }
+              });
+            }
+          });
+        }
+      });
+
       setNodes(newNodes);
       setEdges(newEdges);
     } catch (err) {

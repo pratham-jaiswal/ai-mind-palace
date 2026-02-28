@@ -348,7 +348,7 @@ class DbPersonMemory:
             relationship (Optional[str]): Relationship to the user (e.g., 'mother'). Defaults to None.
             locality (Optional[str]): Their locality or location. Defaults to None.
             age (Optional[int]): Their age in years. Defaults to None.
-            knows (Optional[List[dict]]): List of dicts specifying people they know (id and name). Defaults to None.
+            knows (Optional[List[dict]]): List of dicts specifying people they know {id: id, name: name}. Defaults to None.
             notes (Optional[List[str]]): Notes about the person.
             additional_info (Optional[dict]): Additional information about the person.
             last_mentioned_str (Optional[str]): The date when the person was last mentioned in "YYYY-MM-DD" format. Defaults to the current date if not provided.
@@ -399,7 +399,7 @@ class DbPersonMemory:
             relationship (Optional[str]): Relationship to the user. Defaults to None.
             locality (Optional[str]): Their locality or location. Defaults to None.
             age (Optional[int]): Their age in years. Defaults to None.
-            knows (Optional[List[dict]]): List of dicts specifying people they know. Will append to existing array if present. Defaults to None.
+            knows (Optional[List[dict]]): List of dicts specifying people they know {id: id, name: name}. Will append to existing array if present. Defaults to None.
             notes_update (Optional[dict]): A dictionary specifying the action and data for notes. 
                                            Example: {"action": "add", "data": ["note1", "note2"]} 
                                            Example: {"action": "replace", "data": ["new note1", "new note2"]}
@@ -682,7 +682,7 @@ class DbProjectMemory:
         Args:
             title (str): The title of the project.
             deadline (Optional[str]): The deadline of the project in 'DD-MM-YYYY' format. Defaults to None.
-            members (Optional[List[dict]]): List of json/dicts with person id and name of people involved (except self). Defaults to None.
+            members (Optional[List[dict]]): List of json/dicts with person id and name {id: id, name: name} of people involved (except self). Defaults to None.
             description (Optional[str]): A description of the project.
             additional_info (Optional[dict]): Additional information about the project.
             status (str): The status of the project. Defaults to 'idea'.
@@ -729,7 +729,7 @@ class DbProjectMemory:
         Args:
             project_id (int): The ID of the project to update.
             deadline (Optional[str]): The new deadline of the project in 'DD-MM-YYYY' format.
-            members (Optional[List[dict]]): List of json/dicts with person id and name of people involved (except self). Appends to existing list.
+            members (Optional[List[dict]]): List of json/dicts with person id and name {id: id, name: name} of people involved (except self). Appends to existing list.
             title (Optional[str]): The new title of the project.
             description (Optional[str]): The new description of the project.
             additional_info (Optional[dict]): Additional information about the project.

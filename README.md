@@ -51,7 +51,7 @@ Check them out to run locally.
   |:--:|
   | <i>Dashboard</i>|
 
-  | <img src="https://file.garden/aATRZRm2KRQR_hmq/AI%20Mind%20Palace/28%20feb%202026%202/Mind%20Map" width="600"> |
+  | <img src="https://file.garden/aATRZRm2KRQR_hmq/AI%20Mind%20Palace/28%20feb%202026%203/Mind%20Map" width="600"> |
   |:--:|
   | <i>Mind Map</i>|
   
