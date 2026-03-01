@@ -1,5 +1,6 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
 from .llm_models import gemini_models
+from utils.env_vars import RESTRICT_LLMS
 
 def get_llm(model: str = "gemini-2.0-flash-lite", temperature: float = 0.3) -> ChatGoogleGenerativeAI:
     """

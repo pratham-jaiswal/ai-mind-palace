@@ -1,5 +1,6 @@
 from langchain_openai import ChatOpenAI
 from .llm_models import openai_models
+from utils.env_vars import RESTRICT_LLMS
 
 def get_llm(model: str = "gpt-4.1-mini", temperature: float = 0.3) -> ChatOpenAI:
     """
