@@ -13,7 +13,7 @@ def get_llm(model: str = "gemini-2.0-flash-lite", temperature: float = 0.3) -> C
         ValueError: If the specified model is not supported.
     """
     
-    if model not in gemini_models():
+    if RESTRICT_LLMS and model not in gemini_models():
         raise ValueError(f"Model {model} is not supported.")
     llm = ChatGoogleGenerativeAI(
         model=model,

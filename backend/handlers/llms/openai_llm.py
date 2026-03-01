@@ -12,7 +12,7 @@ def get_llm(model: str = "gpt-4.1-mini", temperature: float = 0.3) -> ChatOpenAI
     Raises:
         ValueError: If the specified model is not supported.
     """
-    if model not in openai_models():
+    if RESTRICT_LLMS and model not in openai_models():
         raise ValueError(f"Model {model} is not supported.")
     llm = ChatOpenAI(
         model=model,

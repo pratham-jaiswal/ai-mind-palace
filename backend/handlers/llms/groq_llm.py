@@ -12,7 +12,7 @@ def get_llm(model: str = "openai/gpt-oss-20b", temperature: float = 0.3) -> Chat
     Raises:
         ValueError: If the specified model is not supported.
     """
-    if model not in groq_models():
+    if RESTRICT_LLMS and model not in groq_models():
         raise ValueError(f"Model {model} is not supported.")
     llm = ChatGroq(
         model=model,
