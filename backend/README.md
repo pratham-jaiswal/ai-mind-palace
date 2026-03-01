@@ -73,4 +73,4 @@ py app.py
   - [x] Conversation CRUD
   - [x] Authentication and user data
 - [x] Dashboard: Other crud operations (Memories Dashboard, Profile Separation, Global Search Filter)
-- [ ] Multiagent structure for more efficiency
+- [x] Multiagent structure for more efficiency
