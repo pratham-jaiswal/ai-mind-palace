@@ -130,7 +130,8 @@ const ChatWindow = () => {
           model: "gpt-4.1-mini",
           temperature: 0.3,
           thread_id: threadId,
-          debug: true
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          debug: import.meta.env.VITE_DEBUG === "true"
         },
         {
           headers: {
