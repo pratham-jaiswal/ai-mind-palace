@@ -14,7 +14,12 @@ It combines **chat** with a **structured memory architecture**, and uses the fol
 
 ## 🚀 Features
 
-- 💬 **Chat** with an AI agent.
+- 💬 **Chat**: Interact with a Supervisor agent who securely orchestrates specialized sub-agents:
+  - **Memory Agent**: Handles unstructured facts and summaries.
+  - **Entity Agent**: Manages people and relationships.
+  - **Project Agent**: Tracks tasks, projects, and deadlines.
+  - **Decision Agent**: Logs and retrieves your past decisions.
+
 - 🧠 **Manage memory**:
 
   1. **Vector memory** (FAISS) – store and retrieve knowledge.
