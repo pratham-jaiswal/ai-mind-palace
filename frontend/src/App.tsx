@@ -1,4 +1,4 @@
-import { Routes, Route, Link, useLocation } from "react-router-dom";
+import { Routes, Route, Link, useLocation } from "react-router";
 import ChatWindow from "./Components/ChatWindow";
 import Dashboard from "./pages/Dashboard";
 import MindMap from "./pages/MindMap";
